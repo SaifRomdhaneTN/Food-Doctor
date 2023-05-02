@@ -37,7 +37,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     onPressed: () {
                       Navigator.pushNamed(context, RegistrationScreenP1.id);
                     },
-                    msg: 'Registre',
+                    msg: 'Registrer',
                     icon: Icons.app_registration,
                     bgcolor: const Color(0xFF40513B),
                     txtcolor: const Color(0xFFEDF1D6)),

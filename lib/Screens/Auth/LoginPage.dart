@@ -100,7 +100,7 @@ class _LoginPState extends State<LoginP> {
                   ),
                 ),
                 const SizedBox(height: 20.0,),
-                Text("Mod de Pas",style: kTextRegStyle,),
+                Text("Mot de Passe",style: kTextRegStyle,),
                 const SizedBox(height:10.0),
                 SizedBox(
                   width: 200.0,

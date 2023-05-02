@@ -1,7 +1,7 @@
 // ignore_for_file: file_names
 
 class Preferences{
-  late String religion;
+  late String HalalKosherPref;
   late String meatPreferences;
   late String organicPreferences;
   late List<String> allergies ;
@@ -9,11 +9,11 @@ class Preferences{
   late bool hasDiabetes;
   late bool hasCholesterol;
 
-  Preferences(this.religion, this.meatPreferences, this.organicPreferences,
+  Preferences(this.HalalKosherPref, this.meatPreferences, this.organicPreferences,
       this.allergies);
 
   Map<String,dynamic> toJson()=>{
-    'Religion' : religion,
+    'HalalKosherPref' : HalalKosherPref,
     'MeatPreferences' :meatPreferences,
     'OrganicPreferences' : organicPreferences,
     'Allergies' :allergies,

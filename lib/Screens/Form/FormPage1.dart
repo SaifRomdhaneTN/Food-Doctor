@@ -10,6 +10,7 @@ import 'package:prototype/Screens/Form/FormPage2.dart';
 import 'package:prototype/constants.dart';
 enum MeatPref {neither,vegan,vegetarian}
 enum OrganicPref{prefersorganic,donotpreferorganic}
+enum HalalAndKosherPref{kosher,halal,neither}
 
 class FormPage1 extends StatefulWidget {
   const FormPage1({Key? key}) : super(key: key);
@@ -22,9 +23,9 @@ class _FormPage1State extends State<FormPage1> {
 
   MeatPref? _meatPref = MeatPref.neither;
   OrganicPref? _organicPref = OrganicPref.donotpreferorganic;
+  HalalAndKosherPref? _halalAndKosherPref = HalalAndKosherPref.neither;
   late String? religion;
   late String? allergy;
-  List<String> religions = ['Islam','christianisme','judaïsme','athéisme'];
   List<String> alergies = ['intolérance au lactose','allergie aux noix','Intolérance coeliaque (farine)','fruits de mer et poissons','champignons','Aucun'];
   List<String> selectedAlergies = [];
   final _formKey = GlobalKey<FormState>();
@@ -40,6 +41,15 @@ class _FormPage1State extends State<FormPage1> {
       return"vegan";
     } else {
       return "vegetarian";
+    }
+  }
+  String fromHalalAndKoshertoString(HalalAndKosherPref? halalAndKosherPref){
+    if(halalAndKosherPref == HalalAndKosherPref.neither) {
+      return"neither";
+    } else if(halalAndKosherPref == HalalAndKosherPref.halal) {
+      return"halal";
+    } else {
+      return "kosher";
     }
   }
 
@@ -65,23 +75,64 @@ class _FormPage1State extends State<FormPage1> {
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: DefaultTextStyle(
                     style: kFormTextStyle,
-                    child: Text('quelle est votre religion?',
+                    child: Text('mangez-vous de la nourriture halal ou casher ?',
                       textAlign: TextAlign.center,),
                   ),
                 ),
                 SizedBox(
-                  width: 200.0,
-                  child: DropdownButtonFormField(
-                    validator: (value){
-                      if(value == null) return"Pick an option";
-                      return null;
-                    },
-                      items: religions.map((e) => DropdownMenuItem(value: e,child: Text(e),)).toList(),
-                      onChanged: (value){
-                        religion=value;
-                      },
-                      hint: const Text("choisir un",style: TextStyle(color: Colors.grey),),
-                    decoration: kInputDecorationOfAuth
+                  height: 120,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ListTile(
+                              title: const Text("aucun"),
+                              leading: Radio<HalalAndKosherPref>(
+                                autofocus: true,
+                                value: HalalAndKosherPref.neither,
+                                groupValue: _halalAndKosherPref,
+                                onChanged: (value){
+                                  setState(() {
+                                    _halalAndKosherPref=value;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: ListTile(
+                              title: const Text("Halal"),
+                              leading: Radio<HalalAndKosherPref>(
+                                value: HalalAndKosherPref.halal,
+                                groupValue: _halalAndKosherPref,
+                                onChanged: (value){
+                                  setState(() {
+                                    _halalAndKosherPref=value;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 200.0,
+                        child: ListTile(
+                          title: const Text("casher"),
+                          leading: Radio<HalalAndKosherPref>(
+                            value: HalalAndKosherPref.kosher,
+                            groupValue: _halalAndKosherPref,
+                            onChanged: (value){
+                              setState(() {
+                                _halalAndKosherPref=value;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const Padding(
@@ -238,7 +289,7 @@ class _FormPage1State extends State<FormPage1> {
                             text: "Veuillez ne pas choisir une allergie avec l’option 'Aucun' ");
                       }
                       else if (_formKey.currentState!.validate() ) {
-                        Preferences p = Preferences(religion!,fromMeatPreftoString(_meatPref!),fromOrganicPrefToString(_organicPref!),selectedAlergies);
+                        Preferences p = Preferences(fromHalalAndKoshertoString(_halalAndKosherPref)!,fromMeatPreftoString(_meatPref!),fromOrganicPrefToString(_organicPref!),selectedAlergies);
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>FormPage2(p: p)));
                       }
                     },

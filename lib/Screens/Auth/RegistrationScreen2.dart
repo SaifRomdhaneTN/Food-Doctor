@@ -57,7 +57,7 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
             context: context,
               type: CoolAlertType.error,
               title:  "Error!",
-              text:  msg
+              text:  e.toString()
           );
         }
     }
@@ -132,7 +132,7 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                       ),
                     ),
                     const SizedBox(height: 20.0,),
-                    Text("mot de pas",style: kTextRegStyle,),
+                    Text("mot de passse",style: kTextRegStyle,),
                     const SizedBox(height:10.0),
                     SizedBox(
                       width: 200.0,
@@ -166,7 +166,7 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                     ),
 
                     const SizedBox(height: 20.0,),
-                    Text("Confirmé mot de pas",style: kTextRegStyle,),
+                    Text("Confirmé mot de passse",style: kTextRegStyle,),
                     const SizedBox(height:10.0),
                     SizedBox(
                       width: 200.0,

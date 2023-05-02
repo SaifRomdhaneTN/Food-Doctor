@@ -188,8 +188,8 @@ class _MainScreenState extends State<MainScreen> {
     try{
       data = await getDataFromBarcode(barcodeScanRes);
       Processing processing = Processing(data);
-      print("//////////////////////////////////////////////////addind database///////////////////////////");
-      await processing.saveToDataBase();
+      print("//////////////////////////////////////////////////adding database///////////////////////////");
+
     }
     catch(e){
       print(e);

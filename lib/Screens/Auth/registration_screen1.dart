@@ -145,7 +145,7 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                   ),
                 ),
                 const SizedBox(height: 20.0,),
-                Text("Numéro Téléphone",style: kTextRegStyle),
+                Text("Numéro de Téléphone",style: kTextRegStyle),
                 const SizedBox(height: 10.0,),
                 SizedBox(
                   width: 200.0,
