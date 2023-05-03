@@ -215,7 +215,7 @@ class Processing {
       Map<String, dynamic> productDetails) {
     bool condition = true;
     List<dynamic> userAllergies = userPrefrences['Allergies'];
-    if (userPrefrences['halal'] != productDetails['halal']) {
+    if (userPrefrences['halal'] == true &&  productDetails['halal'] == false) {
       condition = false;
     }
     if (userPrefrences['vegan'] == true && productDetails['vegan'] == false)
