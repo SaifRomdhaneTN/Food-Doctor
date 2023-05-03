@@ -8,6 +8,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:prototype/Components/Classes/Processing.dart';
 import 'package:prototype/Screens/History.dart';
+import 'package:prototype/Screens/ScanResult.dart';
 import 'package:prototype/constants.dart';
 import 'package:prototype/main.dart' as main;
 import 'package:http/http.dart' as http;
@@ -188,8 +189,9 @@ class _MainScreenState extends State<MainScreen> {
     try{
       data = await getDataFromBarcode(barcodeScanRes);
       Processing processing = Processing(data);
-      print("//////////////////////////////////////////////////adding database///////////////////////////");
-
+      print("//////////////////////////////////////////////////Ingreidients///////////////////////////");
+      String result = await processing.checkIfCanEat();
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>ScanResult(Result: result)));
     }
     catch(e){
       print(e);

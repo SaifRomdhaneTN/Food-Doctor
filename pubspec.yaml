@@ -53,6 +53,7 @@ dependencies:
   flutter_barcode_scanner: ^2.0.0
   http: ^0.13.5
   translator: ^0.1.7
+  google_cloud_translation: ^0.0.3
 
 dev_dependencies:
   flutter_test:

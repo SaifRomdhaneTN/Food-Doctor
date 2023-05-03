@@ -149,7 +149,7 @@ final Map<String, String> foodAdditives = {
   "e469" :"Enzymatically hydrolysed carboxy methyl cellulose",
   "e470a" :"Sodium, potassium and calcium salts of fatty acids",
   "e470b" :"Magnesium salts of fatty acids",
-  "e471" :"Mono- and diglycerides of fatty acids",
+  "e471" :"diglycerides",
   "e472a" :"Acetic acid esters of mono- and diglycerides of fatty acids",
   "e472b" :"Lactic acid esters of mono- and diglycerides of fatty acids",
   "e472c" :"Citric acid esters of mono- and diglycerides of fatty acids",

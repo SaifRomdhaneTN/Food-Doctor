@@ -26,7 +26,7 @@ class _FormPage1State extends State<FormPage1> {
   HalalAndKosherPref? _halalAndKosherPref = HalalAndKosherPref.neither;
   late String? religion;
   late String? allergy;
-  List<String> alergies = ['intolérance au lactose','allergie aux noix','Intolérance coeliaque (farine)','fruits de mer et poissons','champignons','Aucun'];
+  List<String> alergies = ['intolérance au lactose','allergie aux noix','Intolérance coeliaque (farine)','fruits de mer et poissons','Aucun'];
   List<String> selectedAlergies = [];
   final _formKey = GlobalKey<FormState>();
 
