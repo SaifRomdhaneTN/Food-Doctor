@@ -22,7 +22,6 @@ class FormPage1 extends StatefulWidget {
 class _FormPage1State extends State<FormPage1> {
 
   MeatPref? _meatPref = MeatPref.neither;
-  OrganicPref? _organicPref = OrganicPref.donotpreferorganic;
   HalalAndKosherPref? _halalAndKosherPref = HalalAndKosherPref.neither;
   late String? religion;
   late String? allergy;
@@ -50,15 +49,6 @@ class _FormPage1State extends State<FormPage1> {
       return"halal";
     } else {
       return "kosher";
-    }
-  }
-
-  String fromOrganicPrefToString(OrganicPref organicPref){
-    if(organicPref == OrganicPref.prefersorganic){
-      return"yes";
-    }
-    else {
-      return"no";
     }
   }
   @override
@@ -203,55 +193,6 @@ class _FormPage1State extends State<FormPage1> {
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: DefaultTextStyle(
                     style: kFormTextStyle,
-                    child: Text('Préférez-vous les aliments biologiques?',
-                      textAlign: TextAlign.center,),
-                  ),
-                ),
-                SizedBox(
-                  height: 100,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ListTile(
-                              title: const Text("Oui"),
-                              leading: Radio<OrganicPref>(
-                                autofocus: true,
-                                value: OrganicPref.prefersorganic,
-                                groupValue: _organicPref,
-                                onChanged: (value){
-                                  setState(() {
-                                    _organicPref=value;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListTile(
-                              title: const Text("Non"),
-                              leading: Radio<OrganicPref>(
-                                value: OrganicPref.donotpreferorganic,
-                                groupValue: _organicPref,
-                                onChanged: (value){
-                                  setState(() {
-                                    _organicPref=value;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.0),
-                  child: DefaultTextStyle(
-                    style: kFormTextStyle,
                     child: Text('Vous avez des allergies ?',
                       textAlign: TextAlign.center,),
                   ),
@@ -289,7 +230,7 @@ class _FormPage1State extends State<FormPage1> {
                             text: "Veuillez ne pas choisir une allergie avec l’option 'Aucun' ");
                       }
                       else if (_formKey.currentState!.validate() ) {
-                        Preferences p = Preferences(fromHalalAndKoshertoString(_halalAndKosherPref)!,fromMeatPreftoString(_meatPref!),fromOrganicPrefToString(_organicPref!),selectedAlergies);
+                        Preferences p = Preferences(fromHalalAndKoshertoString(_halalAndKosherPref),fromMeatPreftoString(_meatPref!),selectedAlergies);
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>FormPage2(p: p)));
                       }
                     },

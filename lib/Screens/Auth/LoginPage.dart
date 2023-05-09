@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, file_names
 
 
 
@@ -62,10 +62,13 @@ class _LoginPState extends State<LoginP> {
      else if (e.toString().contains("invalid-email")) {
     msg="Invalid Email";
     }
+     else {
+       msg = e.toString();
+     }
     CoolAlert.show(
     context: context,
     type: CoolAlertType.error,
-    text: e.toString());
+    text: msg);
     }
   }
 

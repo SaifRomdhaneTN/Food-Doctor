@@ -3,9 +3,8 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:prototype/Components/Classes/Product.dart';
 
 import 'package:translator/translator.dart';
 
@@ -99,7 +98,11 @@ class Processing {
     List<String> updated = [];
     String oz = "1 oz ";
     for (int i = 0; i < ingredients.length; i++) {
-      updated.add(oz + ingredients[i]);
+      if(!ingredients[i].contains("tuna")) {
+        updated.add(oz + ingredients[i]);
+      } else {
+        updated.insert(updated.length, oz + ingredients[i]);
+      }
     }
     return updated;
   }
@@ -121,18 +124,6 @@ class Processing {
       return false;
     }
   }
-
-  void showIngridients() async {
-    bool condition = await extractIngreidients();
-    if (condition) {
-      print("/////////////////");
-      print(ingredients);
-    }
-    else {
-      print("///////////////////Errrorrrrr");
-    }
-  }
-
   Future<Map<String, dynamic>> UserPrefrencesToMap() async {
     DocumentSnapshot snapshot = await _firestore.collection("users").doc(
         _auth.currentUser!.email).get();
@@ -140,30 +131,49 @@ class Processing {
     bool halal = false;
     bool vegan = false;
     bool vegetarian = false;
-    bool organic = false;
     if (data['HalalKosherPref'] != 'neither') halal = true;
     if (data['MeatPreferences'] == 'vegan') vegan = true;
     if (data['MeatPreferences'] == 'vegetarian') vegetarian = true;
-    if (data['OrganicPreferences'] == 'yes') organic = true;
     return {
       "halal": halal,
       "vegan": vegan,
       "vegetarian": vegetarian,
-      "organic": organic,
       "Allergies": data['Allergies'],
-      "IngrCantEat": data['IngredientsCantEat']
+      "IngrCantEat": data['IngredientsCantEat'],
+      "HasCholesterol":data['HasCholesterol'],
+      "HasDiabetes":data['HasDiabetes']
     };
+  }
+
+  String ProductHighCholesterol(){
+    try{
+      String salt_level = _data['product']['nutrient_levels']['salt'];
+      return salt_level;}
+    catch(e){
+      return "unkown";
+    }
+  }
+
+  String ProductHighFat(){
+    try{
+      String Fat_level = _data['product']['nutrient_levels']['fat'];
+      return Fat_level;
+    }
+    catch(e){
+      return "unkown";
+    }
   }
 
   Map<String, dynamic> ProductIntoMap() {
     bool halal = false;
     bool vegan = false;
     bool vegetarian = false;
-    bool organic = false;
     bool lactos = true;
     bool nuts = true;
     bool gluten = true;
     bool fish = true;
+    bool colesterol = true;
+    bool diabeties = true;
     List<dynamic> EdamamData = _EdamamDataRaw['healthLabels'];
     if (EdamamData.contains("ALCOHOL_FREE") &&
         EdamamData.contains('PORK_FREE')) halal = true;
@@ -173,24 +183,52 @@ class Processing {
     if (EdamamData.contains("GLUTEN_FREE")) gluten = false;
     if (EdamamData.contains("CRUSTACEAN_FREE") &&
         EdamamData.contains("SHELLFISH_FREE") &&
-        EdamamData.contains("FISH_FREE")) fish = false;
+        EdamamData.contains("FISH_FREE")&&!ingredients.contains("tuna")) fish = false;
     if (EdamamData.contains("PEANUT_FREE") &&
         EdamamData.contains("TREE_NUT_FREE")) nuts = false;
-
+    if(ProductHighCholesterol()=="low") colesterol = false;
+    if(ProductHighFat()=="low") diabeties = false;
     return {
       "halal": halal,
       "vegan": vegan,
       "vegetarian": vegetarian,
-      "organic": organic,
       "lactos": lactos,
       "nuts": nuts,
       "gluten": gluten,
-      "fish": fish
+      "fish": fish,
+      "colesterol": colesterol,
+      "diabeties":diabeties
     };
   }
 
-  Future<String> checkIfCanEat() async {
+  bool ComparePref(Map<String, dynamic> userPrefrences, Map<String, dynamic> productDetails) {
+    bool condition = true;
+    List<dynamic> userAllergies = userPrefrences['Allergies'];
+    if (userPrefrences['halal'] == true &&  productDetails['halal'] == false) {
+      condition = false;
+    }
+    if (userPrefrences['vegan'] == true && productDetails['vegan'] == false) condition = false;
+    if (userPrefrences['vegetarian'] == true && productDetails['vegetarian'] == false) condition = false;
+    for(int i =0; i<userAllergies.length;i++){
+      if(userAllergies[i] == 'intolérance au lactose' && productDetails['lactos'] == true) {
+        condition = false;
+      } else if(userAllergies[i] == ' allergie aux noix' && productDetails['nuts'] == true) {
+        condition = false;
+      } else if(userAllergies[i] == ' Intolérance coeliaque (farine)' && productDetails['gluten'] == true) {
+        condition = false;
+      } else if(userAllergies[i] == ' fruits de mer et poissons' && productDetails['fish'] == true) {
+        condition = false;
+      }
+    }
+    if(userPrefrences["HasCholesterol"] == true && productDetails["colesterol"] == true ) condition = false;
+    if(userPrefrences["HasDiabetes"] == true && productDetails["diabeties"] == true ) condition = false;
+      return condition;
+  }
+
+
+  Future<Product> checkIfCanEat(String barcode) async {
     bool IngreidientsFound = await extractIngreidients();
+
     if (IngreidientsFound == true) {
       bool EdamamWorked = await foodapi();
       if (EdamamWorked == true) {
@@ -198,36 +236,60 @@ class Processing {
         Map<String, dynamic> productDetails = ProductIntoMap();
         bool condition = ComparePref(userPrefrences, productDetails);
         if (condition) {
-          return 'You can eat this product :) ';
-        } else {
-          return 'i would not Recommend it "_" ';
+          String creator;
+          if(_data['product']['brands']==null) {
+            creator ="unkown";
+          } else {
+            creator = _data['product']['brands'];
+          }
+          return Product(
+          _data['product']['product_name'],
+          creator,
+          _data['product']['image_front_url'],
+          productDetails,
+          "you can eat it :)",
+          barcode,
+          ingredients);
+        }
+        else {
+          String creator;
+          if(_data['product']['brands']==null) {
+            creator ="unkown";
+          } else {
+            creator = _data['product']['brands'];
+          }
+          return Product(
+              _data['product']['product_name'],
+              creator,
+              _data['product']['image_front_url'],
+              productDetails,
+              "I would not recommend it :(",
+              barcode,
+              ingredients);
         }
       }
       else {
-        return "Edamam Error";
+        return Product(
+            'error',
+            'error',
+            'error',
+            {"Error":"EdamamError"},
+            "Edamam Error",
+            barcode,
+            ingredients);
       }
     }
-    else
-      return 'Product not found';
+    else {
+      return Product(
+          'error',
+          'error',
+          'error',
+          {"Error":"Product not found"},
+          "Product not found",
+          _data['product']['id'],
+          ingredients);
+    }
   }
 
-  bool ComparePref(Map<String, dynamic> userPrefrences,
-      Map<String, dynamic> productDetails) {
-    bool condition = true;
-    List<dynamic> userAllergies = userPrefrences['Allergies'];
-    if (userPrefrences['halal'] == true &&  productDetails['halal'] == false) {
-      condition = false;
-    }
-    if (userPrefrences['vegan'] == true && productDetails['vegan'] == false)
-      condition = false;
-    if (userPrefrences['vegetarian'] == true &&
-        productDetails['vegetarian'] == false) condition = false;
-    for(int i =0; i<userAllergies.length;i++){
-      if(userAllergies[i] == 'intolérance au lactose' && productDetails['lactos'] == true) condition = false;
-      else if(userAllergies[i] == ' allergie aux noix' && productDetails['nuts'] == true)condition = false;
-      else if(userAllergies[i] == ' Intolérance coeliaque (farine)' && productDetails['gluten'] == true)condition = false;
-      else if(userAllergies[i] == ' fruits de mer et poissons' && productDetails['fish'] == true)condition = false;
-    }
-    return condition;
-  }
+
 }

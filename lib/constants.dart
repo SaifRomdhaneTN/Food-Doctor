@@ -9,7 +9,8 @@ TextStyle kTextRegStyle = TextStyle(
 );
 
 const kInputDecorationOfAuth = InputDecoration(
-  errorStyle: TextStyle(color: Color(0xFFE3242B),fontFamily: "Eastman",),
+  errorStyle: TextStyle(color: Colors.redAccent,fontFamily: "Eastman"),
+  errorMaxLines: 2,
   hintText: '',
   fillColor: Colors.white,
   filled: true,
@@ -124,4 +125,49 @@ fillColor: kCPWhite,
 hintText: "nom du produit",
 prefixIcon: Icon(Icons.search),
 iconColor: kCPGreenMid,
+);
+const kResultPNameTextStyle = TextStyle(
+  fontSize: 14,
+  fontFamily: "Eastman",
+  wordSpacing:5,
+  height: 1.5,
+);
+const kResultPIngrTextStyle = TextStyle(
+  fontSize: 22,
+  fontFamily: "Eastman",
+  wordSpacing:5,
+  height: 1.5,
+);
+final kWelcomeScreenCircularButtonStyle = ButtonStyle(
+  backgroundColor: MaterialStateColor.resolveWith((states) =>Colors.white),
+  elevation: MaterialStateProperty.resolveWith((states) => 10),
+  shape: MaterialStateProperty.all<CircleBorder>(
+      const CircleBorder(
+      )
+  ),
+);
+
+final kAccountManagmentButtons = ButtonStyle(
+  elevation: MaterialStateProperty.resolveWith((states) => 5),
+  shape: MaterialStateProperty.all<OutlinedBorder>(
+      RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)
+      )
+  ),
+  backgroundColor: MaterialStateProperty.resolveWith((states) => const Color(0xFF609966)),
+);
+const kPrefDisplayTextStyle =  TextStyle(
+color: Color(0xFF609966),
+fontFamily: 'Eastman',
+fontSize: 16,
+fontWeight: FontWeight.bold
+);
+
+
+
+const kUserDisplayTextStyle =  TextStyle(
+    color: Color(0xFFEDF1D6),
+    fontSize: 24,
+    fontFamily: 'Eastman',
+    fontWeight: FontWeight.bold
 );

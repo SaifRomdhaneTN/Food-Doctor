@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 class UserLocal {
   late String _fullname;
   late DateTime _dateofbirth ;
@@ -53,6 +55,7 @@ class UserLocal {
     'FullName' : _fullname,
     'DateOfBirth' : _dateofbirth,
     'Age' : _age,
+    'Country':_countryofResidence,
     'PhoneNumber' : _phoneNumber,
     'FilledForm' : _filledform
   };

@@ -1,3 +1,4 @@
+// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 
 class WelcomeButton extends StatelessWidget {
@@ -31,7 +32,7 @@ class WelcomeButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children:  [
               Icon(icon,color: txtcolor,),
-              SizedBox(width: 20.0,),
+              const SizedBox(width: 20.0,),
               Text(msg,style: TextStyle(
                   fontSize: 25.0,
                   fontFamily: 'Eastman',

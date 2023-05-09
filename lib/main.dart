@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         MainScreen.id:(context)=>const MainScreen(),
         FormScreen.id:(context)=> const FormScreen(),
         FormPage1.id:(context)=> const FormPage1(),
-        FormPage2.id :(context) => FormPage2(p: Preferences("none","none","none",[]))
+        FormPage2.id :(context) => FormPage2(p: Preferences("none","none",[]))
       },
     );
   }

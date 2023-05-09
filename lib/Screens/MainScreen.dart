@@ -1,14 +1,21 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, use_build_context_synchronously
 
 import 'dart:convert';
 
 import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cool_alert/cool_alert.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:prototype/Components/Classes/Processing.dart';
+import 'package:prototype/Components/Classes/Product.dart';
+import 'package:prototype/Screens/Account%20Handeling/AccountMain.dart';
 import 'package:prototype/Screens/History.dart';
-import 'package:prototype/Screens/ScanResult.dart';
+import 'package:prototype/Screens/Scaning/ProductNotFoundPage.dart';
+import 'package:prototype/Screens/Scaning/ScanResult.dart';
 import 'package:prototype/constants.dart';
 import 'package:prototype/main.dart' as main;
 import 'package:http/http.dart' as http;
@@ -49,6 +56,9 @@ class _MainScreenState extends State<MainScreen> {
       }
     });
   }
+  Future<bool> _onWillPop() async {
+    return false; //<-- SEE HERE
+  }
 
   @override
   void dispose() {
@@ -57,115 +67,135 @@ class _MainScreenState extends State<MainScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return  ModalProgressHUD(
-      inAsyncCall:showS ,
-      child: Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(
-                width: double.infinity,
-                height: 80,
-                child: Container(
-                  decoration: kcustomContainer,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: (){},
-                        style: kButtonStyleAppBar,
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
-                          child: Text("filtres",style: kButtonTextStyleAppbar),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 150.0,
-                        child: TextField(
-                          decoration: kSearchFieldDec,
-                          onSubmitted: (value){
-                          },
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const History()));
-                        },
-                        style: kButtonStyleAppBar,
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
-                          child: Text("historique",style: kButtonTextStyleAppbar),
-                        ),
-                      ),
-                      InkWell(
-                        child: const Icon(
-                          Icons.more_vert,
-                          color:kCPWhite,
-                          size: 30,),
-                        onTap: (){
-
-                        },
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              if (!controller.value.isInitialized) const Text("Camera Error")
-              else Expanded(
-                  child: SizedBox(
-                      width:double.infinity,
-                      child: CameraPreview(controller)
-                  )
-              ),
-              SizedBox(
-                height: 80,
-                width: double.infinity,
-                child: Container(
-                  decoration: kcustomContainer,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      TextButton(
+    return  WillPopScope(
+      onWillPop: _onWillPop,
+      child: ModalProgressHUD(
+        inAsyncCall:showS ,
+        child: Scaffold(
+          body: SafeArea(
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: 80,
+                  child: Container(
+                    decoration: kcustomContainer,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton(
                           onPressed: (){},
                           style: kButtonStyleAppBar,
                           child: const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
-                            child: Text("Mes Promos",style: kButtonTextStyleAppbar,),
+                            child: Text("filtres",style: kButtonTextStyleAppbar),
                           ),
-                      ),
-                      TextButton(
-                          onPressed: (){
-                            // if(controller.value.isInitialized) onTakePictureButtonPressed();
-                            scanBarcode();
-                            setState(() {
-
-                            });
-                            },
-                          style: kButtonStyleAppBar.copyWith(shape:  MaterialStateProperty.all<CircleBorder>(
-                              const CircleBorder(
-                                  side: BorderSide(width: 0,color: Color.fromRGBO(0, 0, 0, 0))
-                              )
-                          ),),
-                          child:  Padding(
-                            padding: const EdgeInsets.all(18.0),
-                            child: Text("Scan",style: kButtonTextStyleAppbar.copyWith(fontSize: 20),),
-                          ),
-                      ),
-                      TextButton(
-                        onPressed: (){},
-                        style: kButtonStyleAppBar,
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
-                          child: Text("Mes Recommandation",style: kButtonTextStyleAppbar,),
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          width: 150.0,
+                          child: TextField(
+                            decoration: kSearchFieldDec,
+                            onSubmitted: (value){
+                            },
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const History()));
+                          },
+                          style: kButtonStyleAppBar,
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
+                            child: Text("historique",style: kButtonTextStyleAppbar),
+                          ),
+                        ),
+                        PopupMenuButton(itemBuilder: (BuildContext bc){
+                          return const[
+                             PopupMenuItem(value: "LogOut",child: Text("LogOut"),),
+                             PopupMenuItem(value:"My account", child: Text("My account"))
+                          ];
+                        },
+                        onSelected: (value) async {
+                          if(value == "LogOut"){
+                            FirebaseAuth auth =FirebaseAuth.instance;
+                            String providerId = auth.currentUser!.providerData.first.providerId;
+                            if(providerId == 'google.com'){
+                              GoogleSignIn googleSignIn = GoogleSignIn();
+                              await googleSignIn.signOut();
+                              Navigator.of(context).popUntil((route) => route.isFirst);
+                            }
+                            else{
+                              await auth.signOut();
+                              Navigator.of(context).popUntil((route) => route.isFirst);
+                            }
+                          }
+                          if(value == "My account"){
+                            FirebaseFirestore firestore = FirebaseFirestore.instance;
+                            FirebaseAuth auth = FirebaseAuth.instance;
+                            DocumentSnapshot document = await firestore.collection("users").doc(auth.currentUser!.email).get();
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>AccountMain(document: document,)));
+                          }
+                        },)
+                      ],
+                    ),
                   ),
                 ),
-              )
-            ],
-          ),
-        )
+                if (!controller.value.isInitialized) const Text("Camera Error")
+                else Expanded(
+                    child: SizedBox(
+                        width:double.infinity,
+                        child: CameraPreview(controller)
+                    )
+                ),
+                SizedBox(
+                  height: 80,
+                  width: double.infinity,
+                  child: Container(
+                    decoration: kcustomContainer,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        TextButton(
+                            onPressed: (){},
+                            style: kButtonStyleAppBar,
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
+                              child: Text("Mes Promos",style: kButtonTextStyleAppbar,),
+                            ),
+                        ),
+                        TextButton(
+                            onPressed: (){
+                              scanBarcode();
+                              setState(() {
+
+                              });
+                              },
+                            style: kButtonStyleAppBar.copyWith(shape:  MaterialStateProperty.all<CircleBorder>(
+                                const CircleBorder(
+                                    side: BorderSide(width: 0,color: Color.fromRGBO(0, 0, 0, 0))
+                                )
+                            ),),
+                            child:  Padding(
+                              padding: const EdgeInsets.all(18.0),
+                              child: Text("Scan",style: kButtonTextStyleAppbar.copyWith(fontSize: 20),),
+                            ),
+                        ),
+                        TextButton(
+                          onPressed: (){},
+                          style: kButtonStyleAppBar,
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
+                            child: Text("Mes Recommandation",style: kButtonTextStyleAppbar,),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )
+        ),
       ),
     );
 
@@ -189,12 +219,26 @@ class _MainScreenState extends State<MainScreen> {
     try{
       data = await getDataFromBarcode(barcodeScanRes);
       Processing processing = Processing(data);
-      print("//////////////////////////////////////////////////Ingreidients///////////////////////////");
-      String result = await processing.checkIfCanEat();
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>ScanResult(Result: result)));
+      Product productResult = await processing.checkIfCanEat(barcodeScanRes);
+      setState(() {
+        showS=false;
+      });
+      if(productResult.getdetails()["Error"]!= null) {
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ProductnotfoundPage()));
+      } else {
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>ScanResult(Result: productResult)));
+      }
     }
     catch(e){
-      print(e);
+      if(!e.toString().contains('404')){
+      CoolAlert.show(
+          context: context,
+          type: CoolAlertType.error,
+          title: "Error",
+          text: "An Error occurred! please do Scan again. ${e.toString()}");}
+      else {
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ProductnotfoundPage()));
+      }
     }
 
     setState(() {
@@ -221,7 +265,6 @@ class _MainScreenState extends State<MainScreen> {
 
   }
   Future<Map<String, dynamic>> getDataFromBarcode(String barcode) async {
-    print(barcode);
     String url = 'https://world.openfoodfacts.org/api/v2/product/$barcode';
     final headers = {"Content-Type": "application/json"};
     final response = await http.post(
@@ -233,8 +276,7 @@ class _MainScreenState extends State<MainScreen> {
       Map<String, dynamic> data = json.decode(response.body);
       return data;
     } else {
-      print(response.statusCode);
-      throw Exception("Failed to get Product data");
+      throw Exception("${response.statusCode}");
     }
   }
 }

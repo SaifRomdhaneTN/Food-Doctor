@@ -1,6 +1,9 @@
 // ignore_for_file: non_constant_identifier_names, use_build_context_synchronously, no_logic_in_create_state, file_names
 
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -53,11 +56,14 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
           if(e.toString().contains("email-already-in-use")){
             msg= "Email Already used by another account.";
           }
+          else {
+            msg = e.toString();
+          }
           CoolAlert.show(
             context: context,
               type: CoolAlertType.error,
               title:  "Error!",
-              text:  e.toString()
+              text:  msg
           );
         }
     }
@@ -65,6 +71,7 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
 
   Map<String,dynamic> UserToJson(UserLocal u,UserCredential newuser)=>{
     'email':newuser.user!.email,
+    'passwordHash':sha256.convert(utf8.encode(pwd)).toString(),
     'Additonal Information':u.toJson()
   };
 

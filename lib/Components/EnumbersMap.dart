@@ -1,3 +1,4 @@
+// ignore_for_file: file_names
 final Map<String, String> foodAdditives = {
   "e100":"Curcumin",
   "e101":"Riboflavin",

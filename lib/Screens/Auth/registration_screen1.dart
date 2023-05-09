@@ -59,123 +59,128 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
     return Scaffold(
       body: BackgroundWidget(
         bgImage: 'assets/background.gif',
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  height: 50.0,
-                ),
-                const Hero(
-                  tag: 'signup',
-                  child: Text("Registre",
-                      textAlign: TextAlign.center,
-                      style: kTitleTextStyle
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    height: 50.0,
                   ),
-                ),
-                const SizedBox(
-                  height: 50.0,
-                ),
-                Text("Nom Complet",style: kTextRegStyle),
-                const SizedBox(height: 10.0),
-                SizedBox(
-                  width: 200.0,
-                  child: TextFormField(
-                  decoration: kInputDecorationOfAuth,
-                  onChanged: (value){
-                      FullName=value;
-                  },
-                  validator: (value){
-                    if(value== null) {
-                      return "option vide";
-                    } else if (value.contains(RegExp(r'[0-9]'))) {
-                      return "Le nom ne contient pas de chiffres.";
-                    } else if(value.length <5) {
-                      return"un nom doit avoir min 5 caractères";
-                    }
-                    return null;
-                  },)
+                  const Hero(
+                    tag: 'signup',
+                    child: Text("Registre",
+                        textAlign: TextAlign.center,
+                        style: kTitleTextStyle
+                    ),
                   ),
-                const SizedBox(height: 20.0),
-                Text("Date de naissance",style: kTextRegStyle),
-                const SizedBox(height: 10.0),
-                SizedBox(
-                  width: 200.0,
-                  child: TextFormField(
-                  decoration: kInputDecorationOfAuth.copyWith(
-                      hintText: "${selectedDate.toLocal()}".split(' ')[0],
-                      hintStyle: const TextStyle(color: Colors.black)
+                  const SizedBox(
+                    height: 50.0,
                   ),
-                  readOnly: true,
-                  onTap: () => setState(() async {
-                    await _selectDate(context);
-                    Age = CalculateAge(selectedDate);
-                  }),
-                  validator: (value){
-                    if(value == null) return  "option vide";
-                    if(Age <10) return "doive être au moins 10 ans";
-                    return null;
-                  },
-                  ),
-                ),
-                const SizedBox(height: 20.0,),
-                Text("pays de résidence",style: kTextRegStyle),
-                const SizedBox(height: 10.0,),
-                SizedBox(
-                  width: 200.0,
-                  child: TextFormField(
-                    decoration: kInputDecorationOfAuth.copyWith(hintText: countryName),
-                    readOnly: true,
-                    onTap: (){showCountryPicker(
-                      context: context,
-                      showPhoneCode: true,
-                      showSearch: true,
-                      onSelect: (Country country) {
-                        setState(() {
-                          countryName=country.name;
-                          phoneCode = country.phoneCode;
-                        });
-                      },
-                    );},
+                  Text("Nom Complet",style: kTextRegStyle),
+                  const SizedBox(height: 10.0),
+                  SizedBox(
+                    width: 200.0,
+                    child: TextFormField(
+                    decoration: kInputDecorationOfAuth,
+                    onChanged: (value){
+                        FullName=value;
+                    },
                     validator: (value){
+                      if(value== null) {
+                        return "option vide";
+                      } else if (value.contains(RegExp(r'[0-9]'))) {
+                        return "Le nom ne contient pas de chiffres.";
+                      } else if(value.length <5) {
+                        return"un nom doit avoir min 5 caractères";
+                      }
                       return null;
                     },
-                  ),
-                ),
-                const SizedBox(height: 20.0,),
-                Text("Numéro de Téléphone",style: kTextRegStyle),
-                const SizedBox(height: 10.0,),
-                SizedBox(
-                  width: 200.0,
-                  child: TextFormField(
-                    keyboardType: TextInputType.phone,
-                    decoration: kInputDecorationOfAuth.copyWith(prefixText: "+ $phoneCode ",prefixStyle: const TextStyle(color: Colors.black)),
-                    onChanged: (value) async {
-                      PhoneNumber = await plugin.PhoneNumberUtil().format(value, phoneCode);
-                      pnvaildation = await plugin.PhoneNumberUtil().validate(PhoneNumber,regionCode: phoneCode);
-                    },
-                    validator: (value) {
-                      if(value == null || value.length<5) return "doive être 5 chiffres au minimum";
-                      if(pnvaildation) return "numéro non validé";
+
+                    )
+                    ),
+                  const SizedBox(height: 20.0),
+                  Text("Date de naissance",style: kTextRegStyle),
+                  const SizedBox(height: 10.0),
+                  SizedBox(
+                    width: 200.0,
+                    child: TextFormField(
+                    decoration: kInputDecorationOfAuth.copyWith(
+                        hintText: "${selectedDate.toLocal()}".split(' ')[0],
+                        hintStyle: const TextStyle(color: Colors.black)
+                    ),
+                    readOnly: true,
+                    onTap: () => setState(() async {
+                      await _selectDate(context);
+                      Age = CalculateAge(selectedDate);
+                    }),
+                    validator: (value){
+                      if(value == null) return  "option vide";
+                      if(Age <10) return "doive être au moins 10 ans";
                       return null;
                     },
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10.0,),
-                RegScreenButton(
-                  onPressed: (){
-                    if(_formKey.currentState!.validate()){
-                      UserLocal user = UserLocal(FullName, selectedDate, Age , countryName, PhoneNumber);
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>RegistrationScreenP2(tempuser: user)));
-                    }
-                  },
-                  msg: 'Suivant',
-                  bgColor: const Color(0xFF40513B),
-                  txtColor: Colors.white,
-                )
-              ],
+                  const SizedBox(height: 20.0,),
+                  Text("pays de résidence",style: kTextRegStyle),
+                  const SizedBox(height: 10.0,),
+                  SizedBox(
+                    width: 200.0,
+                    child: TextFormField(
+                      decoration: kInputDecorationOfAuth.copyWith(hintText: countryName),
+                      readOnly: true,
+                      onTap: (){showCountryPicker(
+                        context: context,
+                        showPhoneCode: true,
+                        showSearch: true,
+                        onSelect: (Country country) {
+                          setState(() {
+                            countryName=country.name;
+                            phoneCode = country.phoneCode;
+                          });
+                        },
+                      );},
+                      validator: (value){
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20.0,),
+                  Text("Numéro de Téléphone",style: kTextRegStyle),
+                  const SizedBox(height: 10.0,),
+                  SizedBox(
+                    width: 200.0,
+                    child: TextFormField(
+                      keyboardType: TextInputType.phone,
+                      decoration: kInputDecorationOfAuth.copyWith(prefixText: "+ $phoneCode ",prefixStyle: const TextStyle(color: Colors.black)),
+                      onChanged: (value) async {
+                        PhoneNumber = await plugin.PhoneNumberUtil().format(value, phoneCode);
+                        pnvaildation = await plugin.PhoneNumberUtil().validate(PhoneNumber,regionCode: phoneCode);
+                      },
+                      validator: (value) {
+                        if(value == null || value.length<5) return "doive être 5 chiffres au minimum";
+                        if(pnvaildation) return "numéro non validé";
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 10.0,),
+                  RegScreenButton(
+                    onPressed: (){
+                      if(_formKey.currentState!.validate()){
+                        UserLocal user = UserLocal(FullName, selectedDate, Age , countryName, PhoneNumber);
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>RegistrationScreenP2(tempuser: user)));
+                      }
+                    },
+                    msg: 'Suivant',
+                    bgColor: const Color(0xFF40513B),
+                    txtColor: Colors.white,
+                  )
+                ],
+              ),
             ),
           ),
         ),
