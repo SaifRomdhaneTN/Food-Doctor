@@ -1,7 +1,8 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, use_build_context_synchronously
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:prototype/Components/BackgroundWidget.dart';
 import 'package:prototype/Components/RegScreenButton.dart';
 import 'package:prototype/Screens/Form/FormPage1.dart';
@@ -29,8 +30,9 @@ class _FormScreenState extends State<FormScreen> {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 15.0),
               child: Text(
-                "Pour commencer à utiliser l’application, vous devez remplir un formulaire rapide.\n"
-                    "en utilisant ceci nous comprendrons vos préférences quand il vient à la nourriture",
+                "In order to start using our application estimed user.\n"
+                    "You will have to Fill in a quick form that will allow us to retrieve your food preferences. \n "
+                    "Of course you can fill it in at a later date",
                 textAlign: TextAlign.center,
                 style: kFormHomeTextStyle
               ),
@@ -43,16 +45,21 @@ class _FormScreenState extends State<FormScreen> {
                     onPressed: (){
                     Navigator.pushNamed(context, FormPage1.id);
                     },
-                    msg: 'continuer',
+                    msg: 'continue',
                     txtColor: Colors.white,
                     bgColor: const Color(0xFF609966)),
                 const SizedBox(width: 10.0,),
                 RegScreenButton(
-                    onPressed: (){
-                    _auth.signOut();
-                    Navigator.pop(context);
+                    onPressed: () async {
+                      if(_auth.currentUser!.providerData.first.providerId=='google.com'){
+                        GoogleSignIn googleSignIn = GoogleSignIn();
+                       await googleSignIn.signOut();
+                      }
+                    else{_auth.signOut();}
+
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                     },
-                    msg: 'sortie',
+                    msg: 'Exit',
                     txtColor: const Color(0xFF609966),
                     bgColor: Colors.white),
               ],

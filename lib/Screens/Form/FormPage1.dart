@@ -25,17 +25,17 @@ class _FormPage1State extends State<FormPage1> {
   HalalAndKosherPref? _halalAndKosherPref = HalalAndKosherPref.neither;
   late String? religion;
   late String? allergy;
-  List<String> alergies = ['intolérance au lactose','allergie aux noix','Intolérance coeliaque (farine)','fruits de mer et poissons','Aucun'];
+  List<String> alergies = ['Lactos Inflorescence','Nut Allergy','Gluten Allergy','Fish Allergy','None'];
   List<String> selectedAlergies = [];
   final _formKey = GlobalKey<FormState>();
 
   bool validateAlergies(List<String> sa){
-    if(sa.length>1 && sa.contains('Aucun')) return false;
+    if(sa.length>1 && sa.contains('None')) return false;
     return true;
   }
   String fromMeatPreftoString(MeatPref meatPref){
     if(meatPref == MeatPref.neither) {
-      return"all";
+      return"none";
     } else if(meatPref == MeatPref.vegan) {
       return"vegan";
     } else {
@@ -65,7 +65,7 @@ class _FormPage1State extends State<FormPage1> {
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: DefaultTextStyle(
                     style: kFormTextStyle,
-                    child: Text('mangez-vous de la nourriture halal ou casher ?',
+                    child: Text('Do you Prefer Halal or Kosher Food?',
                       textAlign: TextAlign.center,),
                   ),
                 ),
@@ -78,7 +78,7 @@ class _FormPage1State extends State<FormPage1> {
                         children: [
                           Expanded(
                             child: ListTile(
-                              title: const Text("aucun"),
+                              title: const Text("Neither"),
                               leading: Radio<HalalAndKosherPref>(
                                 autofocus: true,
                                 value: HalalAndKosherPref.neither,
@@ -110,7 +110,7 @@ class _FormPage1State extends State<FormPage1> {
                       SizedBox(
                         width: 200.0,
                         child: ListTile(
-                          title: const Text("casher"),
+                          title: const Text("Kosher"),
                           leading: Radio<HalalAndKosherPref>(
                             value: HalalAndKosherPref.kosher,
                             groupValue: _halalAndKosherPref,
@@ -129,7 +129,7 @@ class _FormPage1State extends State<FormPage1> {
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: DefaultTextStyle(
                     style: kFormTextStyle,
-                    child: Text('Êtes-vous végétalien ou végétarien ?',
+                    child: Text('Are you a Vegan Or Vegetarian ?',
                       textAlign: TextAlign.center,),
                   ),
                 ),
@@ -142,7 +142,7 @@ class _FormPage1State extends State<FormPage1> {
                         children: [
                           Expanded(
                             child: ListTile(
-                              title: const Text("aucun"),
+                              title: const Text("Neither"),
                               leading: Radio<MeatPref>(
                                 autofocus: true,
                                 value: MeatPref.neither,
@@ -157,7 +157,7 @@ class _FormPage1State extends State<FormPage1> {
                           ),
                           Expanded(
                             child: ListTile(
-                              title: const Text("végan"),
+                              title: const Text("Vegan"),
                               leading: Radio<MeatPref>(
                                 value: MeatPref.vegan,
                                 groupValue: _meatPref,
@@ -174,7 +174,7 @@ class _FormPage1State extends State<FormPage1> {
                       SizedBox(
                         width: 200.0,
                         child: ListTile(
-                          title: const Text("végétarien"),
+                          title: const Text("Vegetarian"),
                           leading: Radio<MeatPref>(
                             value: MeatPref.vegetarian,
                             groupValue: _meatPref,
@@ -193,7 +193,7 @@ class _FormPage1State extends State<FormPage1> {
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: DefaultTextStyle(
                     style: kFormTextStyle,
-                    child: Text('Vous avez des allergies ?',
+                    child: Text('Do you have any allergies ?',
                       textAlign: TextAlign.center,),
                   ),
                 ),
@@ -208,7 +208,7 @@ class _FormPage1State extends State<FormPage1> {
                         });
                       },
                   decoration: kInputDecorationOfAuth,
-                  whenEmpty: "sélectionner un",)
+                  whenEmpty: "Select One",)
                 ),
                 const SizedBox(
                   height: 20.0,
@@ -219,22 +219,22 @@ class _FormPage1State extends State<FormPage1> {
                         CoolAlert.show(
                             context: context,
                             type: CoolAlertType.warning,
-                            title: "Erreur liée aux allergies!",
-                            text: "Veuillez choisir une allergie ou n’en choisir aucune si vous n’en avez pas.");
+                            title: "Error while selecting allergies!",
+                            text: "Please select 'none' if you don't have any of the presented allergies.");
                       }
                       else if(validateAlergies(selectedAlergies)==false){
                         CoolAlert.show(
                             context: context,
                             type: CoolAlertType.warning,
-                            title: "Erreur liée aux allergies!",
-                            text: "Veuillez ne pas choisir une allergie avec l’option 'Aucun' ");
+                            title: "Error while selecting allergies!",
+                            text: "Please Don't Select another Option with the 'None' option.");
                       }
                       else if (_formKey.currentState!.validate() ) {
                         Preferences p = Preferences(fromHalalAndKoshertoString(_halalAndKosherPref),fromMeatPreftoString(_meatPref!),selectedAlergies);
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>FormPage2(p: p)));
                       }
                     },
-                    msg: "Suivant",
+                    msg: "Next",
                     txtColor: const Color(0xFF609966),
                     bgColor: Colors.white)
               ],

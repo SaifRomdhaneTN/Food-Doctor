@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, no_logic_in_create_state, use_build_context_synchronously
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:prototype/Components/AccountButton.dart';
@@ -9,6 +10,7 @@ import 'package:prototype/Screens/Account%20Handeling/ChangePassword.dart';
 import 'package:prototype/Screens/Account%20Handeling/MyUserInfoScreen.dart';
 import 'package:prototype/Screens/Account%20Handeling/PreferencesScreen.dart';
 import 'package:prototype/Screens/Account%20Handeling/SignedInWithGoogle.dart';
+import 'package:prototype/Screens/Auth/ChangePhoto.dart';
 
 class AccountMain extends StatefulWidget {
    const AccountMain({Key? key, required this.document}) : super(key: key);
@@ -22,6 +24,7 @@ class _AccountMainState extends State<AccountMain> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final DocumentSnapshot document;
   late Map<String,dynamic> userPersonalInfo;
+  late ImageProvider image;
   _AccountMainState(this.document);
 
   Future<void> _showAllergiesDialog() async {
@@ -37,16 +40,26 @@ class _AccountMainState extends State<AccountMain> {
                       child: const Text('Yes'),
                       onPressed: () async {
                         String? email = auth.currentUser!.email;
+                        String? userID = auth.currentUser!.uid;
                         String providerId = auth.currentUser!.providerData.first.providerId;
+                        print("Yesss");
                         auth.currentUser!.delete();
                         if(providerId == 'google.com'){
-                          GoogleSignIn googleSignIn = GoogleSignIn();
-                          await googleSignIn.signOut();
+                            GoogleSignIn googleSignIn = GoogleSignIn();
+                            await googleSignIn.signOut();
                         }
                         else{
                           await auth.signOut();
+                          try {
+                            await FirebaseStorage.instance.ref().child(
+                                'profilepic$userID.jpg').delete();
+                          }
+                          catch(e){
+                            print(e.toString());
+                          }
                         }
-                        firestore.collection("users").doc(email).delete();
+                        await firestore.collection("users").doc(email).delete();
+
 
                         Navigator.of(context).popUntil((route) => route.isFirst);
                       },
@@ -68,6 +81,11 @@ class _AccountMainState extends State<AccountMain> {
   @override
   void initState()  {
     userPersonalInfo = document.get("Additonal Information");
+    if(auth.currentUser!.photoURL == null) {
+      image=const AssetImage('assets/person.png');
+    } else {
+      image=NetworkImage(auth.currentUser!.photoURL!);
+    }
     super.initState();
   }
   @override
@@ -78,14 +96,12 @@ class _AccountMainState extends State<AccountMain> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children:   [
-            PhysicalModel(
-              color: const Color(0xFF9D9D9D),
-              borderRadius: BorderRadius.circular(90),
-              elevation: 10,
-              child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.person,color: Colors.black38,size: 150,),
-              ),
+            Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                    backgroundImage: image,
+                    radius: 90,
+                    backgroundColor: Colors.grey,)
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -118,9 +134,20 @@ class _AccountMainState extends State<AccountMain> {
                 String providerId = auth.currentUser!.providerData.first.providerId;
                 if(providerId != 'google.com') {
                   String hashedPass = document.get('passwordHash');
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=> ChangePassword(originalPassHash: hashedPass,)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> const ChangePassword()));
                 } else {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>SignedInWithGoogle()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>const SignedInWithGoogle(element: "Password")));
+                }
+              },),
+            AccountButton(
+              text: 'Change Photo',
+              onPressed: (){
+                String providerId = auth.currentUser!.providerData.first.providerId;
+                if(providerId != 'google.com') {
+                  String hashedPass = document.get('passwordHash');
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> const ChangePhoto()));
+                } else {
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>const SignedInWithGoogle(element: "Profile photo",)));
                 }
               },),
             AccountButton(

@@ -41,14 +41,26 @@ const kTitleTextStyle =  TextStyle(
     color: Colors.white,
     shadows: <Shadow>[
       Shadow(
-        offset: Offset(0.0, 6.0),
-        blurRadius: 5.0,
-        color: Color.fromARGB(255, 0, 0, 0),
+        offset: Offset(0.0, 2.0),
+        blurRadius: 1.0,
+        color: Color.fromRGBO(0, 0, 0, 0.4),
       ),
     ],
     fontWeight: FontWeight.bold
 );
-
+const kTitleTextStyle2 =  TextStyle(
+    fontFamily: 'Eastman',
+    fontSize: 30.0,
+    color: Color(0xFF609966),
+    shadows: <Shadow>[
+      Shadow(
+        offset: Offset(0.0, 2.0),
+        blurRadius: 1.0,
+        color: Color.fromRGBO(0, 0, 0, 0.5),
+      ),
+    ],
+    fontWeight: FontWeight.bold
+);
 const kInfoButtonTextStyleReg2 = TextStyle(
     fontSize: 25,
     fontWeight: FontWeight.bold,

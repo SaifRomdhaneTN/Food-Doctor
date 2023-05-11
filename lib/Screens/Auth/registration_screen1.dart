@@ -32,7 +32,7 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
   late String FullName='';
   late String PhoneNumber='';
   String countryName ='Unites States';
-  String phoneCode="+1";
+  String phoneCode="1";
   bool pnvaildation = false;
 
 
@@ -70,17 +70,14 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                   const SizedBox(
                     height: 50.0,
                   ),
-                  const Hero(
-                    tag: 'signup',
-                    child: Text("Registre",
-                        textAlign: TextAlign.center,
-                        style: kTitleTextStyle
-                    ),
+                  const Text("Registre",
+                      textAlign: TextAlign.center,
+                      style: kTitleTextStyle
                   ),
                   const SizedBox(
                     height: 50.0,
                   ),
-                  Text("Nom Complet",style: kTextRegStyle),
+                  Text("Full Name",style: kTextRegStyle),
                   const SizedBox(height: 10.0),
                   SizedBox(
                     width: 200.0,
@@ -91,11 +88,11 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                     },
                     validator: (value){
                       if(value== null) {
-                        return "option vide";
+                        return "Empty field";
                       } else if (value.contains(RegExp(r'[0-9]'))) {
-                        return "Le nom ne contient pas de chiffres.";
+                        return "The name must not contain numbers.";
                       } else if(value.length <5) {
-                        return"un nom doit avoir min 5 caractères";
+                        return"Must be at least 5 characters long";
                       }
                       return null;
                     },
@@ -103,7 +100,7 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                     )
                     ),
                   const SizedBox(height: 20.0),
-                  Text("Date de naissance",style: kTextRegStyle),
+                  Text("Date Of Birth",style: kTextRegStyle),
                   const SizedBox(height: 10.0),
                   SizedBox(
                     width: 200.0,
@@ -118,14 +115,14 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                       Age = CalculateAge(selectedDate);
                     }),
                     validator: (value){
-                      if(value == null) return  "option vide";
-                      if(Age <10) return "doive être au moins 10 ans";
+                      if(value == null) return  "Empty field";
+                      if(Age <10) return "Must at least be 10 years old";
                       return null;
                     },
                     ),
                   ),
                   const SizedBox(height: 20.0,),
-                  Text("pays de résidence",style: kTextRegStyle),
+                  Text("Country of residence",style: kTextRegStyle),
                   const SizedBox(height: 10.0,),
                   SizedBox(
                     width: 200.0,
@@ -149,7 +146,7 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                     ),
                   ),
                   const SizedBox(height: 20.0,),
-                  Text("Numéro de Téléphone",style: kTextRegStyle),
+                  Text("Phone Number",style: kTextRegStyle),
                   const SizedBox(height: 10.0,),
                   SizedBox(
                     width: 200.0,
@@ -161,8 +158,10 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                         pnvaildation = await plugin.PhoneNumberUtil().validate(PhoneNumber,regionCode: phoneCode);
                       },
                       validator: (value) {
-                        if(value == null || value.length<5) return "doive être 5 chiffres au minimum";
-                        if(pnvaildation) return "numéro non validé";
+                        if(value == null) return "Empty Field";
+                        if(value.length<5) return "Must be at least 5 numbers";
+                        if(pnvaildation) return "Number not valid";
+                        if(value.contains(RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[(/*),.+#;]).{8,}$')))return "It should contain only numbers";
                         return null;
                       },
                     ),
@@ -175,7 +174,7 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>RegistrationScreenP2(tempuser: user)));
                       }
                     },
-                    msg: 'Suivant',
+                    msg: 'Next',
                     bgColor: const Color(0xFF40513B),
                     txtColor: Colors.white,
                   )

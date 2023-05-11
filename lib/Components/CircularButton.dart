@@ -17,7 +17,7 @@ class CircularButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-        style: kWelcomeScreenCircularButtonStyle.copyWith(backgroundColor: MaterialStateColor.resolveWith((states) =>Colors.blueAccent)),
+        style: kWelcomeScreenCircularButtonStyle.copyWith(backgroundColor: MaterialStateColor.resolveWith((states) =>bgcolor)),
         onPressed: onPressed,
         child:  FaIcon(
           icon,

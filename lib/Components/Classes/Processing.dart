@@ -210,18 +210,27 @@ class Processing {
     if (userPrefrences['vegan'] == true && productDetails['vegan'] == false) condition = false;
     if (userPrefrences['vegetarian'] == true && productDetails['vegetarian'] == false) condition = false;
     for(int i =0; i<userAllergies.length;i++){
-      if(userAllergies[i] == 'intolérance au lactose' && productDetails['lactos'] == true) {
+      if(userAllergies[i] == 'Lactos Inflorescence' && productDetails['lactos'] == true) {
         condition = false;
-      } else if(userAllergies[i] == ' allergie aux noix' && productDetails['nuts'] == true) {
+      } else if(userAllergies[i] == 'Nut Allergy' && productDetails['nuts'] == true) {
         condition = false;
-      } else if(userAllergies[i] == ' Intolérance coeliaque (farine)' && productDetails['gluten'] == true) {
+      } else if(userAllergies[i] == 'Gluten Allergy' && productDetails['gluten'] == true) {
         condition = false;
-      } else if(userAllergies[i] == ' fruits de mer et poissons' && productDetails['fish'] == true) {
+      } else if(userAllergies[i] == 'Fish Allergy' && productDetails['fish'] == true) {
         condition = false;
       }
     }
     if(userPrefrences["HasCholesterol"] == true && productDetails["colesterol"] == true ) condition = false;
     if(userPrefrences["HasDiabetes"] == true && productDetails["diabeties"] == true ) condition = false;
+    List<dynamic> ingrCantEat = userPrefrences['IngrCantEat'];
+    print("////////////////////////");
+    print(ingrCantEat);
+    print(ingredients);
+    for(int i = 0;i<ingrCantEat.length;i++){
+      for(int j =0;j<ingredients.length;j++){
+        if(ingredients[j].toLowerCase().trim().contains(ingrCantEat[i].toString().toLowerCase().trim())) condition = false;
+      }
+    }
       return condition;
   }
 

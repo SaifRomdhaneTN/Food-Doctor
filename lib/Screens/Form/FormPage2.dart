@@ -66,14 +66,14 @@ class _FormPage2State extends State<FormPage2> {
        CoolAlert.show(
            context: context,
            type: CoolAlertType.success,
-           title: "Formulaire rempli!",
-           text: "Le formulaire est complet. Vous pouvez commencer à utiliser l’application");
+           title: "Form Finished!",
+           text: "You have Completed the mandatory Form. You are now capable of Using the application.");
        Navigator.pushNamed(context, MainScreen.id);
      },
       onError: (e)=> CoolAlert.show(
           context: context,
           type: CoolAlertType.error,
-          title: "quelque chose a mal tourné",
+          title: "There may have been an error.",
       text: e));
   }
   @override
@@ -90,14 +90,14 @@ class _FormPage2State extends State<FormPage2> {
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: DefaultTextStyle(
                     style: kFormTextStyle,
-                    child: Text("les ingrédients que vous ne pouvez pas manger (facultatif)",
+                    child: Text("Is there any Ingreidients that you are not comfortable Eating ?\n (Optional)",
                       textAlign: TextAlign.center,),
                   ),
                 ),
                  SizedBox(
                    width: 300.0,
                    child: TextFormField(
-                     decoration: kInputDecorationOfAuth.copyWith(hintText: "Séparer les ingrédients par un ','."),
+                     decoration: kInputDecorationOfAuth.copyWith(hintText: "Separate the ingredients with , "),
                      validator: (value){
                        if(value == null) {
                          extra_allergies="none";
@@ -114,7 +114,7 @@ class _FormPage2State extends State<FormPage2> {
                   padding: EdgeInsets.symmetric(vertical: 20.0),
                   child: DefaultTextStyle(
                     style: kFormTextStyle,
-                    child: Text('Souffrez-vous de diabète ?',
+                    child: Text('Do you Suffer from Diabetes?',
                       textAlign: TextAlign.center,),
                   ),
                 ),
@@ -127,7 +127,7 @@ class _FormPage2State extends State<FormPage2> {
                         children: [
                           Expanded(
                             child: ListTile(
-                              title: const Text("Oui"),
+                              title: const Text("Yes"),
                               leading: Radio<DiabeticPref>(
                                 value: DiabeticPref.diabetic,
                                 groupValue: _diabeticPref,
@@ -142,7 +142,7 @@ class _FormPage2State extends State<FormPage2> {
                           Expanded(
                             child: ListTile(
                               autofocus: true,
-                              title: const Text("Non"),
+                              title: const Text("No"),
                               leading: Radio<DiabeticPref>(
                                 value: DiabeticPref.notdiebatic,
                                 groupValue: _diabeticPref,
@@ -163,7 +163,7 @@ class _FormPage2State extends State<FormPage2> {
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: DefaultTextStyle(
                     style: kFormTextStyle,
-                    child: Text('Souffrez-vous de cholestérol ?',
+                    child: Text('Do you Suffer From Cholesterol?',
                       textAlign: TextAlign.center,),
                   ),
                 ),
@@ -176,7 +176,7 @@ class _FormPage2State extends State<FormPage2> {
                         children: [
                           Expanded(
                             child: ListTile(
-                              title: const Text("Oui"),
+                              title: const Text("Yes"),
                               leading: Radio<CholesterolPref>(
                                 value: CholesterolPref.hascholesterol,
                                 groupValue: _cholesterolPref,
@@ -191,7 +191,7 @@ class _FormPage2State extends State<FormPage2> {
                           Expanded(
                             child: ListTile(
                               autofocus: true,
-                              title: const Text("Non"),
+                              title: const Text("No"),
                               leading: Radio<CholesterolPref>(
                                 value: CholesterolPref.donothavecholesterol,
                                 groupValue: _cholesterolPref,
@@ -215,7 +215,7 @@ class _FormPage2State extends State<FormPage2> {
                         p.hasCholesterol = fromCholesterolPrefToString(_cholesterolPref!);
                         getDocument(p);
                     },
-                    msg: "Terminer",
+                    msg: "Finish",
                     txtColor: const Color(0xFF609966),
                     bgColor: Colors.white)
               ],

@@ -111,12 +111,12 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                         PopupMenuButton(itemBuilder: (BuildContext bc){
                           return const[
-                             PopupMenuItem(value: "LogOut",child: Text("LogOut"),),
-                             PopupMenuItem(value:"My account", child: Text("My account"))
+                            PopupMenuItem(value:"My account", child: Text("My account"),),
+                            PopupMenuItem(value: "Sign Out",child: Text("Sign Out"),),
                           ];
                         },
                         onSelected: (value) async {
-                          if(value == "LogOut"){
+                          if(value == "Sign Out"){
                             FirebaseAuth auth =FirebaseAuth.instance;
                             String providerId = auth.currentUser!.providerData.first.providerId;
                             if(providerId == 'google.com'){

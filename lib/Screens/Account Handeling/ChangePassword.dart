@@ -14,10 +14,9 @@ import 'package:prototype/Components/RegScreenButton.dart';
 import 'package:prototype/constants.dart';
 
 class ChangePassword extends StatefulWidget {
-  const ChangePassword({Key? key, required this.originalPassHash}) : super(key: key);
-  final String originalPassHash;
+  const ChangePassword({Key? key}) : super(key: key);
   @override
-  State<ChangePassword> createState() => _ChangePasswordState(originalPassHash);
+  State<ChangePassword> createState() => _ChangePasswordState();
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
@@ -26,10 +25,9 @@ class _ChangePasswordState extends State<ChangePassword> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late bool equalToBasePassword= false;
   late bool showS = false;
-  final String originalPassHash;
   late String newPass;
 
-  _ChangePasswordState(this.originalPassHash);
+  _ChangePasswordState();
 
 
 
@@ -46,16 +44,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       }
     }
   }
-  bool validatePassWithFirebase(String value)  {
-    String hashedEnteredPassword = sha256.convert(utf8.encode(value)).toString();
-    if(hashedEnteredPassword==originalPassHash) {
-      print("Matches");
-      return true;
-    } else {
-      print("Noooooooo");
-      return false;
-    }
-  }
+
 
   void updatePassword() async {
     try{
@@ -82,7 +71,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             key: _formKey,
             child: SingleChildScrollView(
               child: SizedBox(
-                height: 600,
+                height: 700,
                 width: 200,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -98,24 +87,6 @@ class _ChangePasswordState extends State<ChangePassword> {
                         thickness: 3,
                       ),
                     ),
-                    Text("Original Password",style: kTextRegStyle,),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      width: 200,
-                      child: TextFormField(
-                        validator: (value)  {
-                          if(value == null) return "empty Field";
-                          if(!validatePassWithFirebase(value)) return"this password does not match the original one";
-                          return null;
-                        },
-                        obscureText: true,
-                        decoration: kInputDecorationOfAuth,
-                        onChanged: (value)  {
-                        },
-                      ),
-                    ),
                     const SizedBox(height: 20.0,),
                     Text("New Password",style: kTextRegStyle,),
                     const SizedBox(height:10.0),
@@ -124,17 +95,20 @@ class _ChangePasswordState extends State<ChangePassword> {
                       children: [
                         SizedBox(
                           width: 200,
-                          child: TextFormField(
-                            validator: (value){
-                              if(value == null ) return "Empty field";
-                              if(!validatePassword(value)) return "Not Valid. Check '!' sign to the right.";
-                              return null;
-                            },
-                            obscureText: true,
-                            decoration: kInputDecorationOfAuth,
-                            onChanged: (value){
-                              newPass=value;
-                            },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 45.0),
+                            child: TextFormField(
+                              validator: (value){
+                                if(value == null ) return "Empty field";
+                                if(!validatePassword(value)) return "Not Valid. Check '!' sign to the right.";
+                                return null;
+                              },
+                              obscureText: true,
+                              decoration: kInputDecorationOfAuth,
+                              onChanged: (value){
+                                newPass=value;
+                              },
+                            ),
                           ),
                         ),
                         InfoFormButton(
@@ -168,7 +142,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 20.0,),
+                    const SizedBox(height: 30.0,),
                     RegScreenButton(
                         onPressed: ()  {
                           setState(() {

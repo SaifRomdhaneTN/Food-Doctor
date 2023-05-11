@@ -27,7 +27,7 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
   late String fullName='';
   late String phoneNumber='';
   String countryName ='Unites States';
-  String phoneCode="+1";
+  String phoneCode="1";
   bool pnvaildation = false;
 
 
@@ -63,14 +63,14 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                 const SizedBox(
                   height: 50.0,
                 ),
-                const Text("Registre",
+                const Text("Register",
                     textAlign: TextAlign.center,
                     style: kTitleTextStyle
                 ),
                 const SizedBox(
                   height: 50.0,
                 ),
-                Text("Nom Complet",style: kTextRegStyle),
+                Text("Full Name",style: kTextRegStyle),
                 const SizedBox(height: 10.0),
                 SizedBox(
                     width: 200.0,
@@ -81,17 +81,17 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                       },
                       validator: (value){
                         if(value== null) {
-                          return "option vide";
+                          return "Empty Field";
                         } else if (value.contains(RegExp(r'[0-9]'))) {
-                          return "Le nom ne contient pas de chiffres.";
+                          return "The name must not contain numbers";
                         } else if(value.length <5) {
-                          return"un nom doit avoir min 5 caractères";
+                          return"The name should be at least 5 letters long";
                         }
                         return null;
                       },)
                 ),
                 const SizedBox(height: 20.0),
-                Text("Date de naissance",style: kTextRegStyle),
+                Text("Date Of Birth",style: kTextRegStyle),
                 const SizedBox(height: 10.0),
                 SizedBox(
                   width: 200.0,
@@ -106,14 +106,14 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                       age = calculateAge(selectedDate);
                     }),
                     validator: (value){
-                      if(value == null) return  "option vide";
-                      if(age <10) return "doive être au moins 10 ans";
+                      if(value == null) return  "Empty Field";
+                      if(age <10) return "The user should be at least 10 years old";
                       return null;
                     },
                   ),
                 ),
                 const SizedBox(height: 20.0,),
-                Text("pays de résidence",style: kTextRegStyle),
+                Text("Country Of Residence",style: kTextRegStyle),
                 const SizedBox(height: 10.0,),
                 SizedBox(
                   width: 200.0,
@@ -137,7 +137,7 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                   ),
                 ),
                 const SizedBox(height: 20.0,),
-                Text("Numéro de Téléphone",style: kTextRegStyle),
+                Text("Phone Number",style: kTextRegStyle),
                 const SizedBox(height: 10.0,),
                 SizedBox(
                   width: 200.0,
@@ -149,8 +149,10 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                       pnvaildation = await plugin.PhoneNumberUtil().validate(phoneNumber,regionCode: phoneCode);
                     },
                     validator: (value) {
-                      if(value == null || value.length<5) return "doive être 5 chiffres au minimum";
-                      if(pnvaildation) return "numéro non validé";
+                      if(value == null ) return "Empty Field";
+                      if(value.length<5) return "It should be at least 5 numbers";
+                      if(value.contains(RegExp(r'[a-z,A-z,[+,()/#.*]]')))return "It should contain only numbers";
+                      if(pnvaildation) return "Phone Number Not Valid";
                       return null;
                     },
                   ),

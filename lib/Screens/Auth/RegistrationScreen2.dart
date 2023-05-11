@@ -37,16 +37,18 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
 
   _RegistrationScreenP2State(this.user);
 
-  Future<void> CreateUser(UserLocal u) async {
+  Future<bool> CreateUser(UserLocal u) async {
 
         try{
           u.filledform(false);
           final UserCredential newUser = await _auth.createUserWithEmailAndPassword(email: email, password: pwd);
           await FirebaseFirestore.instance.collection("users").doc(email).set(UserToJson(u,  newUser));
+          newUser.user!.sendEmailVerification();
           setState(() {
             showS=false;
           });
-          Navigator.pushNamed(context, LoginP.id);
+          CoolAlert.show(context: context, type: CoolAlertType.success,title: "Registration complete",text: "Please verify your email. check you junk mail as it would most likely the mail will be sent there.");
+          return true;
         }
         catch(e){
           setState(() {
@@ -65,6 +67,7 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
               title:  "Error!",
               text:  msg
           );
+          return false;
         }
     }
 
@@ -112,12 +115,9 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                     const SizedBox(
                       height: 80.0,
                     ),
-                    const Hero(
-                      tag: 'signup',
-                      child: Text("Registre",
-                          textAlign: TextAlign.center,
-                          style: kTitleTextStyle
-                      ),
+                    const Text("Registre",
+                        textAlign: TextAlign.center,
+                        style: kTitleTextStyle
                     ),
                     const SizedBox(
                       height: 50.0,
@@ -128,7 +128,7 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                       width: 200.0,
                       child: TextFormField(
                         validator: (value){
-                          if(value == null || !EmailValidator.validate(value)) return "email non validé";
+                          if(value == null || !EmailValidator.validate(value)) return "email Not Valid";
                           return null;
                         },
                         keyboardType: TextInputType.emailAddress,
@@ -139,7 +139,7 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                       ),
                     ),
                     const SizedBox(height: 20.0,),
-                    Text("mot de passse",style: kTextRegStyle,),
+                    Text("Password",style: kTextRegStyle,),
                     const SizedBox(height:10.0),
                     SizedBox(
                       width: 200.0,
@@ -148,7 +148,8 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                           Flexible(
                             child: TextFormField(
                               validator: (value){
-                                if(value == null || !validatePassword(value)) return "non validé";
+                                if(value == null) return "Empty field";
+                                if(!validatePassword(value)) return "Not Valid";
                                 return null;
                               },
                               obscureText: true,
@@ -163,8 +164,8 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                               CoolAlert.show(
                                   context: context,
                                   type: CoolAlertType.info,
-                                  title: "Specification de mot de pas",
-                                  text: " le mot de passe doit contenir au moins :  \n *) 1 nombre \n *) 1 lettre (Majuscule et Minuscule ) \n *) et 1 caractère spécial (!@#&_*~)");
+                                  title: "Password Specifications :",
+                                  text: " The password must Contain at least:  \n - 1 Number \n - 1 Letter (Upper and Lower Case) \n - And 1  special character among these: \n !@#&_*~");
                             },
                             child: const Text("!",style: kInfoButtonTextStyleReg2),
                           ),
@@ -173,13 +174,14 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                     ),
 
                     const SizedBox(height: 20.0,),
-                    Text("Confirmé mot de passse",style: kTextRegStyle,),
+                    Text("Confirm Password",style: kTextRegStyle,),
                     const SizedBox(height:10.0),
                     SizedBox(
                       width: 200.0,
                       child: TextFormField(
                         validator: (value){
-                          if(value == null || value!= pwd) return "ce n'est pas égale à ci-dessus";
+                          if(value == null )return "Empty field";
+                          if(value!= pwd) return "It does not match";
                           return null;
                         },
                         obscureText: true,
@@ -191,12 +193,13 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                     ),
                     const SizedBox(height: 20.0,),
                     RegScreenButton(
-                        onPressed: ()  {
+                        onPressed: ()  async {
                           setState(() {
                             showS=true;
                           });
                           if (_formKey.currentState!.validate()) {
-                            CreateUser(u);
+                            bool result = await CreateUser(u);
+                            if(result) Navigator.pushNamed(context, LoginP.id);
                           }
                           else {
                             setState(() {
