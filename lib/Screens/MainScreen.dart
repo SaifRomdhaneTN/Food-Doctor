@@ -12,6 +12,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:prototype/Components/Classes/Processing.dart';
 import 'package:prototype/Components/Classes/Product.dart';
+import 'package:prototype/Components/Recommendations.dart';
 import 'package:prototype/Screens/Account%20Handeling/AccountMain.dart';
 import 'package:prototype/Screens/History.dart';
 import 'package:prototype/Screens/Scaning/ProductNotFoundPage.dart';
@@ -255,7 +256,7 @@ class _MainScreenState extends State<MainScreen> {
     usersIngrCantEat= documentSnapshot.get('Preferences')['IngredientsCantEat'];
     customScan = documentSnapshot.get('customScanOn');
     customPrefs=documentSnapshot.get('customScanPref');
-    setSwitches();
+    if(customScan)setSwitches();
   }
 
   void setSwitches() async{
@@ -403,7 +404,8 @@ class _MainScreenState extends State<MainScreen> {
                         itemBuilder: (BuildContext bc){
                         return const[
                           PopupMenuItem(value:"My account", child: Text("My Account"),),
-                          PopupMenuItem(value: "ScanHistory",child: Text("Scan History"),),
+                          PopupMenuItem(value:"ScanHistory",child: Text("Scan History"),),
+                          PopupMenuItem(value:"Recommendations",child: Text("Recommendations"),),
                           PopupMenuItem(value: "Sign Out",child: Text("Sign out"),),
                         ];
                       },
@@ -429,6 +431,9 @@ class _MainScreenState extends State<MainScreen> {
                           }
                           if(value == "ScanHistory"){
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>const History()));
+                          }
+                          if(value == 'Recommendations'){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const Recommendations()));
                           }
                         },
                         child: Material(

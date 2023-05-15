@@ -189,7 +189,7 @@ class Processing {
     bool diabeties = true;
     List<dynamic> EdamamData = _EdamamDataRaw['healthLabels'];
     if (EdamamData.contains("ALCOHOL_FREE") &&
-        EdamamData.contains('PORK_FREE')) halal = true;
+        EdamamData.contains('KOSHER')) halal = true;
     if (EdamamData.contains("VEGAN")) vegan = true;
     if (EdamamData.contains("VEGETARIAN")) vegetarian = true;
     if (EdamamData.contains("DAIRY_FREE")) lactos = false;
@@ -322,8 +322,6 @@ class Processing {
   }
 
   void saveToDataBase(Product p)async{
-    DocumentSnapshot documentSnapshotProducts =await _firestore.collection("products").doc(p.getBarCode()).get();
-    DocumentSnapshot documentSnapshotUserScans =await _firestore.collection("UserScans").doc(_auth.currentUser!.email).get();
     try{
       await _firestore
           .collection("UserScans")

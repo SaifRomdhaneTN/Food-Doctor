@@ -27,7 +27,7 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
   late String fullName='';
   late String phoneNumber='';
   String countryName ='Unites States';
-  String phoneCode="+1";
+  String phoneCode="1";
   bool pnvaildation = false;
 
 
@@ -63,17 +63,14 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
                 const SizedBox(
                   height: 50.0,
                 ),
-                const Hero(
-                  tag: 'signup',
-                  child: Text("Registre",
-                      textAlign: TextAlign.center,
-                      style: kTitleTextStyle
-                  ),
+                Text("Register",
+                    textAlign: TextAlign.center,
+                    style: kTitleTextStyle
                 ),
                 const SizedBox(
                   height: 50.0,
                 ),
-                Text("Nom Complet",style: kTextRegStyle),
+                Text("Full Name",style: kTextRegStyle),
                 const SizedBox(height: 10.0),
                 SizedBox(
                     width: 200.0,
@@ -84,17 +81,17 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
                       },
                       validator: (value){
                         if(value== null) {
-                          return "option vide";
+                          return "Empty Field";
                         } else if (value.contains(RegExp(r'[0-9]'))) {
-                          return "Le nom ne contient pas de chiffres.";
+                          return "Must Not Contain numbers";
                         } else if(value.length <5) {
-                          return"un nom doit avoir min 5 caractères";
+                          return"Must be at least 5 characters long";
                         }
                         return null;
                       },)
                 ),
                 const SizedBox(height: 20.0),
-                Text("Date de naissance",style: kTextRegStyle),
+                Text("Date of Birth",style: kTextRegStyle),
                 const SizedBox(height: 10.0),
                 SizedBox(
                   width: 200.0,
@@ -109,14 +106,14 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
                       age = calculateAge(selectedDate);
                     }),
                     validator: (value){
-                      if(value == null) return  "option vide";
-                      if(age <10) return "doive être au moins 10 ans";
+                      if(value == null) return  "Empty Field";
+                      if(age <10) return "Must be at least 10 years old";
                       return null;
                     },
                   ),
                 ),
                 const SizedBox(height: 20.0,),
-                Text("pays de résidence",style: kTextRegStyle),
+                Text("Country of residence",style: kTextRegStyle),
                 const SizedBox(height: 10.0,),
                 SizedBox(
                   width: 200.0,
@@ -140,7 +137,7 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
                   ),
                 ),
                 const SizedBox(height: 20.0,),
-                Text("Numéro de Téléphone",style: kTextRegStyle),
+                Text("Phone Number",style: kTextRegStyle),
                 const SizedBox(height: 10.0,),
                 SizedBox(
                   width: 200.0,
@@ -152,8 +149,9 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
                       pnvaildation = await plugin.PhoneNumberUtil().validate(phoneNumber,regionCode: phoneCode);
                     },
                     validator: (value) {
-                      if(value == null || value.length<5) return "doive être 5 chiffres au minimum";
-                      if(pnvaildation) return "numéro non validé";
+                      if(value == null) return "Empty Field";
+                      if(value.length<5) return "Must be at least 5 numbers long";
+                      if(pnvaildation) return "Number not valid";
                       return null;
                     },
                   ),

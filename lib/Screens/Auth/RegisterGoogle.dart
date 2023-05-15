@@ -172,7 +172,9 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                           'FilledForm':false,
                           'FullName':fullName,
                           'PhoneNumber':phoneNumber
-                        }
+                        },
+                        'customScanOn':false,
+                        'customScanPref':{}
                       });
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>const FormScreen()));
                     }

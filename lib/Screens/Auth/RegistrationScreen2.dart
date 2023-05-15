@@ -75,7 +75,9 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
   Map<String,dynamic> UserToJson(UserLocal u,UserCredential newuser)=>{
     'email':newuser.user!.email,
     'passwordHash':sha256.convert(utf8.encode(pwd)).toString(),
-    'Additonal Information':u.toJson()
+    'Additonal Information':u.toJson(),
+    'customScanOn':false,
+    'customScanPref':{}
   };
 
   bool validatePassword(String value) {
