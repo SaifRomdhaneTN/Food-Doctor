@@ -8,7 +8,6 @@ import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:prototype/Components/Classes/Processing.dart';
@@ -33,11 +32,293 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
 
   late CameraController controller;
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  late Map<String,dynamic> customPrefs = {};
+  late List<dynamic> usersIngrCantEat=[];
   bool showS=false;
+  bool customScan = false;
+  late bool halal = false;
+  late bool vegan = false;
+  late bool vegitarian = false;
+  late bool fishFree = false;
+  late bool nutFree = false;
+  late bool lactosFree = false;
+  late bool glutenFree = false;
+  late bool lowFat = false;
+  late bool lowSalt = false;
+
+  Future<void> _showFilterDialog() async {
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return SimpleDialog(
+              title: const Text(
+                "Filters :",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'EastMan',
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),//Filters Title
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+
+                      const SizedBox(height: 20,
+                      width: 50,
+                      child: Divider(
+                        thickness: 3,
+                      ),),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:  [
+                          const Text("Halal",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                          Switch(value: halal, onChanged: (value){
+                            setState((){
+                              halal = value;
+                            });
+                          })
+                        ],
+                      ),//Halal
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:  [
+                          const Text("Vegan",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                          Switch(value: vegan , onChanged: (value){
+                            setState((){
+                              vegan = value;
+                            });
+                          })
+                        ],
+                      ),//Vegan
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:  [
+                          const Text("Vegetarian",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                          Switch(value: vegitarian , onChanged: (value){
+                            setState((){
+                              vegitarian = value;
+                            });
+                          })
+                        ],
+                      ),//Vegetarian
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:  [
+                          const Text("Lactos Free",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                          Switch(value: lactosFree , onChanged: (value){
+                            setState((){
+                              lactosFree = value;
+                            });
+                          })
+                        ],
+                      ),//Lactos Free
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:  [
+                          const Text("Gluten Free",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                          Switch(value: glutenFree , onChanged: (value){
+                            setState((){
+                              glutenFree = value;
+                            });
+                          })
+                        ],
+                      ),//Gluten Free
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:  [
+                          const Text("Nuts Free",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                          Switch(value: nutFree , onChanged: (value){
+                            setState((){
+                              nutFree = value;
+                            });
+                          })
+                        ],
+                      ),//Nuts Free
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:  [
+                          const Text("Fish Free",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                          Switch(value: fishFree , onChanged: (value){
+                            setState((){
+                              fishFree = value;
+                            });
+                          })
+                        ],
+                      ),//Fish Free
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:  [
+                          const Text("Low Fat",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                          Switch(value: lowFat , onChanged: (value){
+                            setState((){
+                              lowFat = value;
+                            });
+                          })
+                        ],
+                      ),//Low Fat
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children:  [
+                          const Text("Low Salt",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                          Switch(value: lowSalt , onChanged: (value){
+                            setState((){
+                              lowSalt = value;
+                            });
+                          })
+                        ],
+                      ),//Low Salt
+                      const SizedBox(
+                        height: 10,
+                      ),
+
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SimpleDialogOption(
+                            child: const Text('Apply',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,fontFamily: 'Eastman'),),
+                            onPressed: ()  async {
+                              await setFilters();
+                              Navigator.pop(context);
+                            },
+                          ),
+                          SimpleDialogOption(
+                            child: const Text('Cancel',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,fontFamily: 'Eastman'),),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          SimpleDialogOption(
+                            child: const Text('Reset',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,fontFamily: 'Eastman'),),
+                            onPressed: () async {
+                              await resetProduct();
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      ),//Buttons
+                    ],
+                  ),
+                )
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+  void setUserInfo() async{
+    DocumentSnapshot documentSnapshot = await firestore.collection("users").doc(auth.currentUser!.email).get();
+    usersIngrCantEat= documentSnapshot.get('Preferences')['IngredientsCantEat'];
+    customScan = documentSnapshot.get('customScanOn');
+    customPrefs=documentSnapshot.get('customScanPref');
+    setSwitches();
+  }
+
+  void setSwitches() async{
+    List<dynamic> allergies = customPrefs['Allergies'];
+    halal =customPrefs['halal'];
+    vegan =customPrefs['vegan'];
+    vegitarian =customPrefs['vegetarian'];
+    lowSalt =customPrefs['HasCholesterol'];
+    lowFat =customPrefs['HasDiabetes'];
+    for(int i =0;i<allergies.length;i++){
+      if(allergies[i] == 'Lactos Inflorescence') lactosFree = true;
+      if(allergies[i] == 'Gluten Allergy') glutenFree = true;
+      if(allergies[i] == 'Nut Allergy') nutFree = true;
+      if(allergies[i] == 'Fish Allergy') fishFree = true;
+    }
+  }
+  
+  Future<void> setFilters() async {
+    customScan = true;
+    List<String> allergies = [];
+    if(lactosFree) allergies.add('Lactos Inflorescence');
+    if(glutenFree) allergies.add('Gluten Allergy');
+    if(nutFree) allergies.add('Nut Allergy');
+    if(fishFree) allergies.add('Fish Allergy');
+    if(!lactosFree && !glutenFree && !nutFree && !fishFree) allergies.add('None');
+    customPrefs={
+      'halal':halal,
+      'vegan':vegan,
+      'vegetarian':vegitarian,
+      'Allergies':allergies,
+      'IngrCantEat':usersIngrCantEat,
+      'HasCholesterol':lowSalt,
+      'HasDiabetes':lowFat
+    };
+    await firestore.collection('users').doc(auth.currentUser!.email).update({
+      'customScanOn':customScan,
+      'customScanPref':customPrefs
+    });
+  }
+
+  Future<void> resetProduct() async {
+    setState((){
+      halal = false;
+      vegan = false;
+      vegitarian = false;
+      fishFree = false;
+      nutFree = false;
+      lactosFree = false;
+      glutenFree = false;
+      lowFat = false;
+      lowSalt = false;
+      customPrefs = {};
+      customScan = false;
+    });
+    await firestore.collection('users').doc(auth.currentUser!.email).update({
+      'customScanOn':customScan,
+      'customScanPref':customPrefs
+    });
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
+    setUserInfo();
     controller = CameraController(main.cameras[0], ResolutionPreset.max);
     controller.initialize().then((_) {
       if (!mounted) {
@@ -56,6 +337,7 @@ class _MainScreenState extends State<MainScreen> {
         }
       }
     });
+    super.initState();
   }
   Future<bool> _onWillPop() async {
     return false; //<-- SEE HERE
@@ -88,15 +370,17 @@ class _MainScreenState extends State<MainScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       TextButton(
-                        onPressed: (){},
+                        onPressed: (){
+                          _showFilterDialog();
+                        },
                         style: kButtonStyleAppBar,
                         child:  Padding(
-                          padding: EdgeInsets.all(3.0),
+                          padding: const EdgeInsets.all(3.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+                            children: const [
                               Icon(Icons.filter_list,color: kCPGreenMid,),
-                              Text("Filtres",style: kButtonTextStyleAppbar),
+                              Text("Filters",style: kButtonTextStyleAppbar),
                             ],
                           ),
                         ),
@@ -221,7 +505,13 @@ class _MainScreenState extends State<MainScreen> {
     try{
       data = await getDataFromBarcode(barcodeScanRes);
       Processing processing = Processing(data);
-      Product productResult = await processing.checkIfCanEat(barcodeScanRes);
+      Product productResult;
+      if(!customScan){
+         productResult = await processing.checkIfCanEat(barcodeScanRes);
+      }
+      else{
+        productResult = await processing.checkIfCanEatWithCustomScan(barcodeScanRes,customPrefs);
+      }
       processing.saveToDataBase(productResult);
       setState(() {
         showS=false;

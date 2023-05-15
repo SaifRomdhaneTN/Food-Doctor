@@ -349,4 +349,76 @@ class Processing {
           .set(p.toMap());
     }
   }
+
+  Future<Product> checkIfCanEatWithCustomScan(String barcode, Map<String, dynamic> customPrefs) async{
+    bool IngreidientsFound = await extractIngreidients();
+    setCategories();
+    if (IngreidientsFound == true) {
+      bool EdamamWorked = await foodapi();
+      if (EdamamWorked == true) {
+        Map<String, dynamic> productDetails = ProductIntoMap();
+        bool condition = ComparePref(customPrefs, productDetails);
+        if (condition) {
+          String creator;
+          if(_data['product']['brands']==null) {
+            creator ="unkown";
+          } else {
+            creator = _data['product']['brands'];
+          }
+          return Product(
+              _data['product']['product_name'],
+              creator,
+              _data['product']['image_front_url'],
+              productDetails,
+              "you can eat it :)",
+              barcode,
+              ingredients,
+              productCategories,
+              DateTime.now());
+        }
+        else {
+          String creator;
+          if(_data['product']['brands']==null) {
+            creator ="unkown";
+          } else {
+            creator = _data['product']['brands'];
+          }
+          return Product(
+              _data['product']['product_name'],
+              creator,
+              _data['product']['image_front_url'],
+              productDetails,
+              "I would not recommend it :(",
+              barcode,
+              ingredients,
+              productCategories,
+              DateTime.now());
+        }
+      }
+      else {
+        return Product(
+            'error',
+            'error',
+            'error',
+            {"Error":"EdamamError"},
+            "Edamam Error",
+            barcode,
+            ingredients,
+            productCategories,
+            DateTime.now());
+      }
+    }
+    else {
+      return Product(
+          'error',
+          'error',
+          'error',
+          {"Error":"Product not found"},
+          "Product not found",
+          _data['product']['id'],
+          ingredients,
+          productCategories,
+          DateTime.now());
+    }
+  }
 }

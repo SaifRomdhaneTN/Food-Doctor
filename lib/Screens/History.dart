@@ -39,23 +39,6 @@ class _HistoryState extends State<History> {
   late bool lowFat = false;
   late bool lowSalt = false;
 
-
-  Color toggleColor(Color col){
-    if (col == Colors.white54) {
-      return const Color(0xFF609966);
-    }
-    else{
-      return Colors.white54;
-    }
-  }
-
-  bool toggleBool(Color color,bool bol){
-    if (color == Colors.white54) {
-      return false;
-    } else {
-     return true;
-    }
-  }
   bool checkWithParameters(productsData) {
     bool condition = true;
     dynamic details= productsData['Details'];
