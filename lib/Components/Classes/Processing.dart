@@ -235,7 +235,7 @@ class Processing {
     }
     if(userPrefrences["HasCholesterol"] == true && productDetails["colesterol"] == true ) condition = false;
     if(userPrefrences["HasDiabetes"] == true && productDetails["diabeties"] == true ) condition = false;
-    List<dynamic> ingrCantEat = userPrefrences['IngrCantEat'];
+    List<dynamic> ingrCantEat = userPrefrences['IngredientsCantEat'];
     print("////////////////////////");
     print(ingrCantEat);
     print(ingredients);

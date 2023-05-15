@@ -287,7 +287,7 @@ class _MainScreenState extends State<MainScreen> {
       'vegan':vegan,
       'vegetarian':vegitarian,
       'Allergies':allergies,
-      'IngrCantEat':usersIngrCantEat,
+      'IngredientsCantEat':usersIngrCantEat,
       'HasCholesterol':lowSalt,
       'HasDiabetes':lowFat
     };
@@ -508,24 +508,33 @@ class _MainScreenState extends State<MainScreen> {
       showS=true;
     });
     try{
-      data = await getDataFromBarcode(barcodeScanRes);
-      Processing processing = Processing(data);
-      Product productResult;
-      if(!customScan){
+     if(barcodeScanRes.length>=10){
+       data = await getDataFromBarcode(barcodeScanRes);
+       Processing processing = Processing(data);
+       Product productResult;
+       if(!customScan){
          productResult = await processing.checkIfCanEat(barcodeScanRes);
-      }
-      else{
-        productResult = await processing.checkIfCanEatWithCustomScan(barcodeScanRes,customPrefs);
-      }
-      processing.saveToDataBase(productResult);
-      setState(() {
-        showS=false;
-      });
-      if(productResult.getdetails()["Error"]!= null) {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ProductnotfoundPage()));
-      } else {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>ScanResult(Result: productResult)));
-      }
+       }
+       else{
+         productResult = await processing.checkIfCanEatWithCustomScan(barcodeScanRes,customPrefs);
+       }
+       processing.saveToDataBase(productResult);
+       setState(() {
+         showS=false;
+       });
+       if(productResult.getdetails()["Error"]!= null) {
+         Navigator.push(context, MaterialPageRoute(builder: (context)=>const ProductnotfoundPage()));
+       } else {
+         Navigator.push(context, MaterialPageRoute(builder: (context)=>ScanResult(Result: productResult)));
+       }
+     }
+     else{
+       CoolAlert.show(
+           context: context,
+           type: CoolAlertType.error,
+           title: "Error",
+           text: "An Error occurred! please do Scan again. $barcodeScanRes");
+     }
     }
     catch(e){
       if(!e.toString().contains('404')){

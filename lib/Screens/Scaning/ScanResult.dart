@@ -1,10 +1,15 @@
-// ignore_for_file: no_logic_in_create_state, non_constant_identifier_names, file_names
+// ignore_for_file: no_logic_in_create_state, non_constant_identifier_names, file_names, use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:prototype/Components/Classes/Product.dart';
 import 'package:prototype/Components/CustomBadge.dart';
+import 'package:prototype/Components/RegScreenButton.dart';
+import 'package:prototype/RecommendationsAfterScan.dart';
 import 'package:prototype/constants.dart';
 
 class ScanResult extends StatefulWidget {
@@ -20,6 +25,7 @@ class _ScanResultState extends State<ScanResult> {
   final Product Result;
   late List<Widget> badges=[];
   late List<Widget> ingr=[];
+  late String recomText ="These are Similar items \n that matches your Requirements";
 
   void fillbadges(){
     Map<String,dynamic> PDetails = Result.getdetails();
@@ -44,8 +50,6 @@ class _ScanResultState extends State<ScanResult> {
   _ScanResultState(this.Result);
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
     if(Result.getCanEat()=="you can eat it :)") {
       resultgif = 'assets/check.gif';
     } else {
@@ -53,6 +57,7 @@ class _ScanResultState extends State<ScanResult> {
     }
     fillbadges();
     showIngreidients();
+    super.initState();
   }
 
   @override
@@ -131,7 +136,34 @@ class _ScanResultState extends State<ScanResult> {
                   thickness: 1.5,
                 ),
               ),
-
+              Text(recomText,style: kResultPIngrTextStyle.copyWith(fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
+              const SizedBox(
+                height: 10,
+              ),
+              RegScreenButton(
+                  onPressed: () async {
+                    Map<String,dynamic> userPref;
+                    DocumentSnapshot document = await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.email!).get();
+                    if(document.get('customScanOn')==false) {
+                      userPref = document.get('Preferences');
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) =>
+                              RecommendationsAfterScan(
+                                  product: Result, userPref: userPref)));
+                    }
+                    else{
+                      userPref = document.get('customScanPref');
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) =>
+                              RecommendationsAfterScan(
+                                  product: Result, userPref: userPref)));
+                    }
+                  },
+                msg: 'Recommendations',
+                bgColor: Colors.green,
+                txtColor: kCPWhite,
+              ),
+              const SizedBox(height: 20,)
             ],
     ),
           ),

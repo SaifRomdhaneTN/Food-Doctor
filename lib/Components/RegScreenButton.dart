@@ -25,6 +25,8 @@ class RegScreenButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(32.0)
               )
           ),
+          elevation: MaterialStateProperty.resolveWith((states) => 5),
+          shadowColor: MaterialStateProperty.resolveWith((states) => Color.fromRGBO(0, 0, 0, 1))
         ),
         child:  Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5.0,vertical: 10.0),
