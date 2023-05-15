@@ -74,7 +74,7 @@ class _ScanResultState extends State<ScanResult> {
                   radius: 70,
                 ),
               ),
-              Padding(padding: const EdgeInsets.symmetric(vertical: 5),child: Text(" ${Result.getname()} Par ${Result.getmaker()}",style: kResultPNameTextStyle)),
+              Padding(padding: const EdgeInsets.symmetric(vertical: 5),child: Text(" ${Result.getname()} Par ${Result.getmaker()}",textAlign: TextAlign.center,style: kResultPNameTextStyle)),
               const SizedBox(
                 width: 50,
                 child: Divider(

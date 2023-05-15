@@ -8,6 +8,7 @@ import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:prototype/Components/Classes/Processing.dart';
@@ -73,48 +74,55 @@ class _MainScreenState extends State<MainScreen> {
         inAsyncCall:showS ,
         child: Scaffold(
           body: SafeArea(
-            child: Column(
+            child: Stack(
               children: [
-                SizedBox(
-                  width: double.infinity,
-                  height: 80,
-                  child: Container(
-                    decoration: kcustomContainer,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: (){},
-                          style: kButtonStyleAppBar,
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
-                            child: Text("filtres",style: kButtonTextStyleAppbar),
+                if (!controller.value.isInitialized) const Text("Camera Permission Not Accepted!",textAlign: TextAlign.center,style: TextStyle(fontSize: 40),)
+                else SizedBox(
+                    width:double.infinity,
+                    height: double.infinity,
+                    child: CameraPreview(controller)
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      TextButton(
+                        onPressed: (){},
+                        style: kButtonStyleAppBar,
+                        child:  Padding(
+                          padding: EdgeInsets.all(3.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.filter_list,color: kCPGreenMid,),
+                              Text("Filtres",style: kButtonTextStyleAppbar),
+                            ],
                           ),
                         ),
-                        SizedBox(
-                          width: 150.0,
-                          child: TextField(
-                            decoration: kSearchFieldDec,
-                            onSubmitted: (value){
-                            },
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const History()));
-                          },
-                          style: kButtonStyleAppBar,
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
-                            child: Text("historique",style: kButtonTextStyleAppbar),
-                          ),
-                        ),
-                        PopupMenuButton(itemBuilder: (BuildContext bc){
-                          return const[
-                            PopupMenuItem(value:"My account", child: Text("My account"),),
-                            PopupMenuItem(value: "Sign Out",child: Text("Sign Out"),),
-                          ];
+                      ),
+                      TextButton(
+                        onPressed: (){
                         },
+                        style: kButtonStyleAppBar.copyWith(shape:  MaterialStateProperty.all<CircleBorder>(
+                            const CircleBorder(
+                                side: BorderSide(width: 0,color: Color.fromRGBO(0, 0, 0, 0))
+                            )
+                        ),),
+                        child:  const Padding(
+                          padding: EdgeInsets.all(5.0),
+                          child: Icon(Icons.search,color: kCPGreenMid,size: 30,)
+                        ),
+                      ),
+                      PopupMenuButton(
+                        // icon: const Icon(Icons.list_outlined,color:Colors.white ,size: 40,weight: 5,),
+                        itemBuilder: (BuildContext bc){
+                        return const[
+                          PopupMenuItem(value:"My account", child: Text("My Account"),),
+                          PopupMenuItem(value: "ScanHistory",child: Text("Scan History"),),
+                          PopupMenuItem(value: "Sign Out",child: Text("Sign out"),),
+                        ];
+                      },
                         onSelected: (value) async {
                           if(value == "Sign Out"){
                             FirebaseAuth auth =FirebaseAuth.instance;
@@ -135,64 +143,58 @@ class _MainScreenState extends State<MainScreen> {
                             DocumentSnapshot document = await firestore.collection("users").doc(auth.currentUser!.email).get();
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>AccountMain(document: document,)));
                           }
-                        },)
-                      ],
-                    ),
+                          if(value == "ScanHistory"){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const History()));
+                          }
+                        },
+                        child: Material(
+                            shape:const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(45))
+                              ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const[
+                                  Text("More",style: kButtonTextStyleAppbar),
+                                  SizedBox(width: 5),
+                                  Icon(Icons.playlist_add_outlined,color: kCPGreenMid,),
+                                ],
+                              ),
+                            )),)
+                    ],
                   ),
-                ),
-                if (!controller.value.isInitialized) const Text("Camera Error")
-                else Expanded(
-                    child: SizedBox(
-                        width:double.infinity,
-                        child: CameraPreview(controller)
-                    )
                 ),
                 SizedBox(
-                  height: 80,
-                  width: double.infinity,
-                  child: Container(
-                    decoration: kcustomContainer,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        TextButton(
-                            onPressed: (){},
-                            style: kButtonStyleAppBar,
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
-                              child: Text("Mes Promos",style: kButtonTextStyleAppbar,),
-                            ),
-                        ),
-                        TextButton(
-                            onPressed: (){
-                              scanBarcode();
-                              setState(() {
+                  height: double.infinity,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20.0),
+                        child: TextButton(
+                          onPressed: (){
+                            scanBarcode();
+                            setState(() {
 
-                              });
-                              },
-                            style: kButtonStyleAppBar.copyWith(shape:  MaterialStateProperty.all<CircleBorder>(
-                                const CircleBorder(
-                                    side: BorderSide(width: 0,color: Color.fromRGBO(0, 0, 0, 0))
-                                )
-                            ),),
-                            child:  Padding(
-                              padding: const EdgeInsets.all(18.0),
-                              child: Text("Scan",style: kButtonTextStyleAppbar.copyWith(fontSize: 20),),
-                            ),
-                        ),
-                        TextButton(
-                          onPressed: (){},
-                          style: kButtonStyleAppBar,
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
-                            child: Text("Mes Recommandation",style: kButtonTextStyleAppbar,),
+                            });
+                          },
+                          style: kButtonStyleAppBar.copyWith(shape:  MaterialStateProperty.all<CircleBorder>(
+                              const CircleBorder(
+                                  side: BorderSide(width: 0,color: Color.fromRGBO(0, 0, 0, 0))
+                              )
+                          ),),
+                          child:  Padding(
+                            padding: const EdgeInsets.all(18.0),
+                            child: Text("Scan",style: kButtonTextStyleAppbar.copyWith(fontSize: 20),),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                )
-              ],
+                ),
+              ]
             ),
           )
         ),
@@ -220,6 +222,7 @@ class _MainScreenState extends State<MainScreen> {
       data = await getDataFromBarcode(barcodeScanRes);
       Processing processing = Processing(data);
       Product productResult = await processing.checkIfCanEat(barcodeScanRes);
+      processing.saveToDataBase(productResult);
       setState(() {
         showS=false;
       });
@@ -231,11 +234,14 @@ class _MainScreenState extends State<MainScreen> {
     }
     catch(e){
       if(!e.toString().contains('404')){
-      CoolAlert.show(
-          context: context,
-          type: CoolAlertType.error,
-          title: "Error",
-          text: "An Error occurred! please do Scan again. ${e.toString()}");}
+        if(!e.toString().contains('NoSuchMethodError')){
+          CoolAlert.show(
+              context: context,
+              type: CoolAlertType.error,
+              title: "Error",
+              text: "An Error occurred! please do Scan again. ${e.toString()}");
+        }
+      }
       else {
         Navigator.push(context, MaterialPageRoute(builder: (context)=>const ProductnotfoundPage()));
       }

@@ -16,6 +16,7 @@ class Processing {
   final Map<String, dynamic> _data;
   late Map<dynamic, dynamic> _EdamamDataRaw;
   late List<String> ingredients = [];
+  late List<String> productCategories=[];
   final translator = GoogleTranslator();
 
   Processing(this._data);
@@ -163,6 +164,18 @@ class Processing {
       return "unkown";
     }
   }
+  void setCategories(){
+    List<dynamic> originalCategories = _data['product']['categories_hierarchy'];
+    try{
+      for(int i=0;i<originalCategories.length;i++){
+        String category = originalCategories[i];
+        productCategories.add(category.substring(3));
+      }
+    }
+    catch(e){
+      print(e.toString());
+    }
+  }
 
   Map<String, dynamic> ProductIntoMap() {
     bool halal = false;
@@ -237,7 +250,7 @@ class Processing {
 
   Future<Product> checkIfCanEat(String barcode) async {
     bool IngreidientsFound = await extractIngreidients();
-
+    setCategories();
     if (IngreidientsFound == true) {
       bool EdamamWorked = await foodapi();
       if (EdamamWorked == true) {
@@ -258,7 +271,9 @@ class Processing {
           productDetails,
           "you can eat it :)",
           barcode,
-          ingredients);
+          ingredients,
+          productCategories,
+          DateTime.now());
         }
         else {
           String creator;
@@ -274,7 +289,9 @@ class Processing {
               productDetails,
               "I would not recommend it :(",
               barcode,
-              ingredients);
+              ingredients,
+              productCategories,
+              DateTime.now());
         }
       }
       else {
@@ -285,7 +302,9 @@ class Processing {
             {"Error":"EdamamError"},
             "Edamam Error",
             barcode,
-            ingredients);
+            ingredients,
+            productCategories,
+            DateTime.now());
       }
     }
     else {
@@ -296,9 +315,38 @@ class Processing {
           {"Error":"Product not found"},
           "Product not found",
           _data['product']['id'],
-          ingredients);
+          ingredients,
+          productCategories,
+          DateTime.now());
     }
   }
 
-
+  void saveToDataBase(Product p)async{
+    DocumentSnapshot documentSnapshotProducts =await _firestore.collection("products").doc(p.getBarCode()).get();
+    DocumentSnapshot documentSnapshotUserScans =await _firestore.collection("UserScans").doc(_auth.currentUser!.email).get();
+    try{
+      await _firestore
+          .collection("UserScans")
+          .doc(_auth.currentUser!.email)
+          .update({p.getBarCode(): DateTime.now()});
+    }
+    catch(e){
+      await _firestore
+          .collection("UserScans")
+          .doc(_auth.currentUser!.email)
+          .set({p.getBarCode(): DateTime.now()});
+    }
+    try{
+      await _firestore
+          .collection("Products")
+          .doc(p.getBarCode())
+          .update(p.toMap());
+    }
+    catch(e){
+      await _firestore
+          .collection("Products")
+          .doc(p.getBarCode())
+          .set(p.toMap());
+    }
+  }
 }

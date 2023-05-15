@@ -93,12 +93,12 @@ const kCPGreenMid = Color(0xFF609966);
 const kCPGteenDark = Color(0xFF40513B);
 
 final kButtonStyleAppBar = ButtonStyle(
-  backgroundColor: MaterialStateProperty.resolveWith((states) => const Color(0xFFEDF1D6)),
+  backgroundColor: MaterialStateProperty.resolveWith((states) => Colors.white),
   elevation: MaterialStateProperty.resolveWith((states) => 5),
   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-      RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10)
-      )
+    const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(45))
+    ),
   ),
 );
 
@@ -106,7 +106,7 @@ const kButtonTextStyleAppbar = TextStyle(
     color: kCPGreenMid,
     fontFamily: "Eastman",
     fontWeight: FontWeight.bold,
-    fontSize: 10
+    fontSize: 18
 );
 
 const kcustomContainer = BoxDecoration(
@@ -182,4 +182,9 @@ const kUserDisplayTextStyle =  TextStyle(
     fontSize: 24,
     fontFamily: 'Eastman',
     fontWeight: FontWeight.bold
+);
+
+const kFiltersOptionTextStyle = TextStyle(
+    fontSize: 16,
+    fontFamily: 'EastMan'
 );
