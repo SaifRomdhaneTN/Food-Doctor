@@ -1,27 +1,33 @@
+// ignore_for_file: no_logic_in_create_state
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:prototype/Components/Classes/Product.dart';
 import 'package:prototype/Components/RecomElement.dart';
 import 'package:prototype/constants.dart';
 
-class Recommendations extends StatefulWidget {
-  const Recommendations({Key? key}) : super(key: key);
+class RecommendationsAfterScan extends StatefulWidget {
+  const RecommendationsAfterScan({Key? key, required this.product, required this.userPref}) : super(key: key);
+  final Product product;
+  final Map<String,dynamic> userPref;
 
   @override
-  State<Recommendations> createState() => _RecommendationsState();
+  State<RecommendationsAfterScan> createState() => _RecommendationsAfterScanState(product,userPref);
 }
 
-class _RecommendationsState extends State<Recommendations> {
+class _RecommendationsAfterScanState extends State<RecommendationsAfterScan> {
+  final Map<String,dynamic> userPref;
+  final Product product;
   final FirebaseAuth auth = FirebaseAuth.instance;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   late List<Map<String,dynamic>> productsThatMatch=[];
-  late Map<String,dynamic> userPref={};
   late List<Widget> recommendations = [];
+
+  _RecommendationsAfterScanState(this.product, this.userPref);
   Future<void> getProducts() async {
     QuerySnapshot<Map<String,dynamic>> querySnapshotOFProducts = await firestore.collection("Products").get();
     List<Map<String,dynamic>> products = querySnapshotOFProducts.docs.map((doc) => doc.data()).toList();
-    DocumentSnapshot documentSnapshot = await firestore.collection("users").doc(auth.currentUser!.email).get();
-    userPref= documentSnapshot.get('Preferences');
     for(int i=0;i<products.length;i++){
       if(comparePref(products[i]['Details'],products[i]['Ingreidients'])){
         productsThatMatch.add(products[i]);
@@ -62,19 +68,43 @@ class _RecommendationsState extends State<Recommendations> {
   }
 
   void setRecommendations() async{
+    List<Map<String,dynamic>> updatedList =[];
+    List<String> productCategories = product.getCategories();
     await getProducts();
     for(int i=0;i<productsThatMatch.length;i++){
-      if(recommendations.length<4){
-      setState(() {
-        recommendations.add(RecomElement(currentProduct:productsThatMatch[i],));
-      });
+    List<dynamic> productMatchCategories =productsThatMatch[i]['Categories'];
+    int counter =0;
+    for(int j =0 ;j<productMatchCategories.length;j++){
+      for(int k =0;k<productCategories.length;k++){
+        if(productMatchCategories[j]==productCategories[k]) counter++;
       }
     }
+    if(counter>=2 && productsThatMatch[i]['Barcode']!= product.getBarCode()) updatedList.add(productsThatMatch[i]);
+    }
+    updatedList.shuffle();
+    for(int i=0;i<updatedList.length;i++){
+      if(recommendations.length<4){
+        setState(() {
+          recommendations.add(RecomElement(currentProduct:updatedList[i],));
+        });
+      }
+    }
+    if(recommendations.isEmpty) {
+      setState(() {
+        recommendations.add(
+            Column(
+              children: [
+                const Image(image: AssetImage('assets/sademoji.gif'),height: 200,width: 200,),
+                Text("Sorry... There are no products in our database that matches your needs."
+                    "\n weather that being similiar to the product scanned or if it is to your preferences.",style: kTitleTextStyle2.copyWith(fontSize: 22,color: kCPGteenDark),textAlign: TextAlign.center,),
+              ],
+            ));
+      });}
   }
 
   @override
   void initState() {
-     setRecommendations();
+    setRecommendations();
     super.initState();
   }
   @override
@@ -94,5 +124,3 @@ class _RecommendationsState extends State<Recommendations> {
     );
   }
 }
-
-

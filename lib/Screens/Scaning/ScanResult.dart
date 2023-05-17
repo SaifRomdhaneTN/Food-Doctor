@@ -9,7 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:prototype/Components/Classes/Product.dart';
 import 'package:prototype/Components/CustomBadge.dart';
 import 'package:prototype/Components/RegScreenButton.dart';
-import 'package:prototype/RecommendationsAfterScan.dart';
+import 'package:prototype/Screens/RecommendationsAfterScan.dart';
 import 'package:prototype/constants.dart';
 
 class ScanResult extends StatefulWidget {

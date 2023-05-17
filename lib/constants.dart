@@ -188,3 +188,10 @@ const kFiltersOptionTextStyle = TextStyle(
     fontSize: 16,
     fontFamily: 'EastMan'
 );
+
+const kSearchParametersNames = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+    fontFamily: 'EastMan',
+  color: kCPGreenMid
+);

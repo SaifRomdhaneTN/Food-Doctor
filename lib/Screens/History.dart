@@ -543,10 +543,12 @@ class _HistoryState extends State<History> {
         titleTextStyle: kTitleTextStyle.copyWith(fontSize: 24),
         centerTitle: true,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: products,
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: products,
+        ),
       )
     );
   }

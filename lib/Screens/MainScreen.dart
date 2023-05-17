@@ -12,11 +12,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:prototype/Components/Classes/Processing.dart';
 import 'package:prototype/Components/Classes/Product.dart';
-import 'package:prototype/Components/Recommendations.dart';
+import 'package:prototype/Components/Classes/SearchParameters.dart';
+import 'package:prototype/Screens/Recommendations.dart';
 import 'package:prototype/Screens/Account%20Handeling/AccountMain.dart';
 import 'package:prototype/Screens/History.dart';
 import 'package:prototype/Screens/Scaning/ProductNotFoundPage.dart';
 import 'package:prototype/Screens/Scaning/ScanResult.dart';
+import 'package:prototype/Screens/SearchResult.dart';
 import 'package:prototype/constants.dart';
 import 'package:prototype/main.dart' as main;
 import 'package:http/http.dart' as http;
@@ -48,6 +50,21 @@ class _MainScreenState extends State<MainScreen> {
   late bool glutenFree = false;
   late bool lowFat = false;
   late bool lowSalt = false;
+
+  late bool halalSearch = false;
+  late bool veganSearch = false;
+  late bool vegitarianSearch = false;
+  late bool fishFreeSearch = false;
+  late bool nutFreeSearch = false;
+  late bool lactosFreeSearch = false;
+  late bool glutenFreeSearch = false;
+  late bool lowFatSearch = false;
+  late bool lowSaltSearch = false;
+  late bool productNameEnteredBool = false;
+  late String productNameEntered ='';
+  late bool ingrsEnteredBool = false;
+  late String ingrsEntered ='';
+  late bool filtersSearchOn = false;
 
   Future<void> _showFilterDialog() async {
     await showDialog<void>(
@@ -81,7 +98,7 @@ class _MainScreenState extends State<MainScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:  [
-                          const Text("Halal",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                           Text("Halal",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
                           Switch(value: halal, onChanged: (value){
                             setState((){
                               halal = value;
@@ -96,7 +113,7 @@ class _MainScreenState extends State<MainScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:  [
-                          const Text("Vegan",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                           Text("Vegan",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
                           Switch(value: vegan , onChanged: (value){
                             setState((){
                               vegan = value;
@@ -111,7 +128,7 @@ class _MainScreenState extends State<MainScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:  [
-                          const Text("Vegetarian",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                           Text("Vegetarian",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
                           Switch(value: vegitarian , onChanged: (value){
                             setState((){
                               vegitarian = value;
@@ -126,7 +143,7 @@ class _MainScreenState extends State<MainScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:  [
-                          const Text("Lactos Free",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                           Text("Lactos Free",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
                           Switch(value: lactosFree , onChanged: (value){
                             setState((){
                               lactosFree = value;
@@ -141,7 +158,7 @@ class _MainScreenState extends State<MainScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:  [
-                          const Text("Gluten Free",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                           Text("Gluten Free",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
                           Switch(value: glutenFree , onChanged: (value){
                             setState((){
                               glutenFree = value;
@@ -156,7 +173,7 @@ class _MainScreenState extends State<MainScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:  [
-                          const Text("Nuts Free",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                           Text("Nuts Free",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
                           Switch(value: nutFree , onChanged: (value){
                             setState((){
                               nutFree = value;
@@ -171,7 +188,7 @@ class _MainScreenState extends State<MainScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:  [
-                          const Text("Fish Free",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                          Text("Fish Free",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
                           Switch(value: fishFree , onChanged: (value){
                             setState((){
                               fishFree = value;
@@ -186,7 +203,7 @@ class _MainScreenState extends State<MainScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:  [
-                          const Text("Low Fat",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                           Text("Low Fat",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
                           Switch(value: lowFat , onChanged: (value){
                             setState((){
                               lowFat = value;
@@ -201,7 +218,7 @@ class _MainScreenState extends State<MainScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children:  [
-                          const Text("Low Salt",style: TextStyle(fontFamily: 'Eastman', fontSize: 24,),),
+                           Text("Low Salt",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
                           Switch(value: lowSalt , onChanged: (value){
                             setState((){
                               lowSalt = value;
@@ -220,20 +237,20 @@ class _MainScreenState extends State<MainScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SimpleDialogOption(
-                            child: const Text('Apply',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,fontFamily: 'Eastman'),),
+                            child:  Text('Apply',style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold)),
                             onPressed: ()  async {
                               await setFilters();
                               Navigator.pop(context);
                             },
                           ),
                           SimpleDialogOption(
-                            child: const Text('Cancel',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,fontFamily: 'Eastman'),),
+                            child:  Text('Cancel',style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold)),
                             onPressed: () {
                               Navigator.pop(context);
                             },
                           ),
                           SimpleDialogOption(
-                            child: const Text('Reset',style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,fontFamily: 'Eastman'),),
+                            child:  Text('Reset',style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold)),
                             onPressed: () async {
                               await resetProduct();
                               Navigator.pop(context);
@@ -243,6 +260,325 @@ class _MainScreenState extends State<MainScreen> {
                       ),//Buttons
                     ],
                   ),
+                )
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showSearchDialog() async {
+    final formKey = GlobalKey<FormState>();
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return  SimpleDialog(
+              elevation: 5,
+              title: const Text(
+                "Search",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontFamily: 'EastMan',
+                  fontWeight: FontWeight.bold,
+                  color: kCPGteenDark
+                ),
+                textAlign: TextAlign.center,
+              ),//Filters Title
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Form(
+                      key: formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text('keyword',style: kSearchParametersNames),
+                              const SizedBox(width: 20,),
+                              SizedBox(
+                                width: 150,
+                                child: TextFormField(
+                                  onChanged: (value){
+                                    if(value.length>1) {
+                                      productNameEntered = value;
+                                      productNameEnteredBool = true;
+                                    }
+                                    else{
+                                      ingrsEnteredBool = false;
+                                    }
+                                  },
+                                  decoration: const InputDecoration(
+                                    hintText: "Ex mayonnaise",
+                                    hintMaxLines: 2,
+                                    errorMaxLines: 2
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text("Please make sure to enter the name in english.",style:kFiltersOptionTextStyle.copyWith(fontSize: 12),textAlign: TextAlign.center,),
+                          const SizedBox(
+                            height: 20,
+                            width: 50,
+                            child: Divider(
+                              thickness: 3,
+                              color: kCPGteenDark,
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Expanded(
+                                child: Text('Ingredients Name',style: kSearchParametersNames,textAlign: TextAlign.center,),
+                              ),
+                              const SizedBox(width: 20,),
+                              SizedBox(
+                                width: 130,
+                                child: TextFormField(
+                                  onChanged: (value){
+                                    if(value.length>1) {
+                                      ingrsEntered = value;
+                                      ingrsEnteredBool = true;
+                                    }
+                                    else{
+                                      ingrsEnteredBool = false;
+                                    }
+                                  },
+                                  decoration: const InputDecoration(
+                                      hintText: "Sugar, Salt, ...",
+                                      hintMaxLines: 2
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text("Enter English words Separated by ,",style:kFiltersOptionTextStyle.copyWith(fontSize: 12),textAlign: TextAlign.center,),
+                          const SizedBox(
+                            height: 20,
+                            width: 50,
+                            child: Divider(
+                              thickness: 3,
+                              color: kCPGteenDark,
+                            ),
+                          ),
+                          Text("Filters : ",style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold),),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children:  [
+                              Text("Halal",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
+                              Switch(value: halalSearch, onChanged: (value){
+                                setState((){
+                                  halalSearch = value;
+                                });
+                              })
+                            ],
+                          ),//Halal
+                          const SizedBox(
+                            height: 10,
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children:  [
+                              Text("Vegan",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
+                              Switch(value: veganSearch , onChanged: (value){
+                                setState((){
+                                  veganSearch = value;
+                                });
+                              })
+                            ],
+                          ),//Vegan
+                          const SizedBox(
+                            height: 10,
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children:  [
+                              Text("Vegetarian",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
+                              Switch(value: vegitarianSearch , onChanged: (value){
+                                setState((){
+                                  vegitarianSearch = value;
+                                });
+                              })
+                            ],
+                          ),//Vegetarian
+                          const SizedBox(
+                            height: 10,
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children:  [
+                              Text("Lactos Free",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
+                              Switch(value: lactosFreeSearch , onChanged: (value){
+                                setState((){
+                                  lactosFreeSearch = value;
+                                });
+                              })
+                            ],
+                          ),//Lactos Free
+                          const SizedBox(
+                            height: 10,
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children:  [
+                              Text("Gluten Free",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
+                              Switch(value: glutenFreeSearch , onChanged: (value){
+                                setState((){
+                                  glutenFreeSearch = value;
+                                });
+                              })
+                            ],
+                          ),//Gluten Free
+                          const SizedBox(
+                            height: 10,
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children:  [
+                              Text("Nuts Free",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
+                              Switch(value: nutFreeSearch , onChanged: (value){
+                                setState((){
+                                  nutFreeSearch = value;
+                                });
+                              })
+                            ],
+                          ),//Nuts Free
+                          const SizedBox(
+                            height: 10,
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children:  [
+                              Text("Fish Free",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
+                              Switch(value: fishFreeSearch , onChanged: (value){
+                                setState((){
+                                  fishFreeSearch = value;
+                                });
+                              })
+                            ],
+                          ),//Fish Free
+                          const SizedBox(
+                            height: 10,
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children:  [
+                              Text("Low Fat",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
+                              Switch(value: lowFatSearch , onChanged: (value){
+                                setState((){
+                                  lowFatSearch = value;
+                                });
+                              })
+                            ],
+                          ),//Low Fat
+                          const SizedBox(
+                            height: 10,
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children:  [
+                              Text("Low Salt",style: kFiltersOptionTextStyle.copyWith(fontSize: 24)),
+                              Switch(value: lowSaltSearch , onChanged: (value){
+                                setState((){
+                                  lowSaltSearch = value;
+                                });
+                              })
+                            ],
+                          ),//Low Salt
+                          const SizedBox(
+                            height: 10,
+                          ),
+
+                          const SizedBox(
+                            height: 20,
+                            width: 50,
+                            child: Divider(
+                              thickness: 3,
+                              color: kCPGteenDark,
+                            ),
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              SimpleDialogOption(
+                                child:  Text('Apply',style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold,color: kCPGteenDark)),
+                                onPressed: ()  async {
+                                  if(!halalSearch && !veganSearch && !vegitarianSearch && !lactosFreeSearch && !glutenFreeSearch && !nutFreeSearch && !fishFreeSearch && !lowFatSearch && !lowSaltSearch) {
+                                    filtersSearchOn = false;
+                                  }
+                                  else{
+                                    filtersSearchOn = true;
+                                  }
+                                  Map<String,dynamic> searchFilters = {
+                                    'halal':halalSearch,
+                                    'vegan':veganSearch,
+                                    'vegetarian':vegitarianSearch,
+                                    'lactosFree':lactosFreeSearch,
+                                    'glutenFree':glutenFreeSearch,
+                                    'nutFree':nutFreeSearch,
+                                    'fishFree':fishFreeSearch,
+                                    'lowSalt':lowSaltSearch,
+                                    'lowFat':lowFatSearch
+                                  };
+                                  if(filtersSearchOn == false && productNameEnteredBool==false && ingrsEnteredBool==false) {
+                                    Navigator.pop(context);
+                                  } else {
+                                    SearchParameters searchParameters = SearchParameters(
+                                            productNameEnteredBool,
+                                            filtersSearchOn,
+                                            ingrsEnteredBool,
+                                            productNameEntered,
+                                            searchFilters,
+                                            ingrsEntered);
+                                    List<Map<String, dynamic>>productsThatMatch = await searchParameters.SearchProduct();
+                                    resetSearch();
+                                    Navigator.push(context,MaterialPageRoute(builder: (context)=>SearchResult(products: productsThatMatch, searchParameters: searchParameters)));
+                                  }
+
+                                },
+                              ),
+                              SimpleDialogOption(
+                                child:  Text('Cancel',style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold,color: kCPGteenDark)),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              SimpleDialogOption(
+                                child:  Text('Reset',style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold,color: kCPGteenDark)),
+                                onPressed: () async {
+                                  resetSearch();
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      )),
                 )
               ],
             );
@@ -316,6 +652,21 @@ class _MainScreenState extends State<MainScreen> {
       'customScanPref':customPrefs
     });
   }
+  void resetSearch(){
+    halalSearch = false;
+    veganSearch = false;
+    vegitarianSearch = false;
+    fishFreeSearch = false;
+    nutFreeSearch = false;
+    lactosFreeSearch = false;
+    glutenFreeSearch = false;
+    lowFatSearch = false;
+    lowSaltSearch = false;
+    productNameEnteredBool = false;
+    productNameEntered="";
+    ingrsEnteredBool = false;
+    ingrsEntered= "";
+  }
 
   @override
   void initState() {
@@ -375,11 +726,11 @@ class _MainScreenState extends State<MainScreen> {
                           _showFilterDialog();
                         },
                         style: kButtonStyleAppBar,
-                        child:  Padding(
-                          padding: const EdgeInsets.all(3.0),
+                        child:  const Padding(
+                          padding: EdgeInsets.all(3.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Icon(Icons.filter_list,color: kCPGreenMid,),
                               Text("Filters",style: kButtonTextStyleAppbar),
                             ],
@@ -388,6 +739,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                       TextButton(
                         onPressed: (){
+                          _showSearchDialog();
                         },
                         style: kButtonStyleAppBar.copyWith(shape:  MaterialStateProperty.all<CircleBorder>(
                             const CircleBorder(
@@ -436,15 +788,15 @@ class _MainScreenState extends State<MainScreen> {
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>const Recommendations()));
                           }
                         },
-                        child: Material(
-                            shape:const RoundedRectangleBorder(
+                        child: const Material(
+                            shape:RoundedRectangleBorder(
                                 borderRadius: BorderRadius.all(Radius.circular(45))
                               ),
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: EdgeInsets.all(8.0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const[
+                                children: [
                                   Text("More",style: kButtonTextStyleAppbar),
                                   SizedBox(width: 5),
                                   Icon(Icons.playlist_add_outlined,color: kCPGreenMid,),
@@ -508,33 +860,41 @@ class _MainScreenState extends State<MainScreen> {
       showS=true;
     });
     try{
-     if(barcodeScanRes.length>=10){
        data = await getDataFromBarcode(barcodeScanRes);
-       Processing processing = Processing(data);
-       Product productResult;
-       if(!customScan){
-         productResult = await processing.checkIfCanEat(barcodeScanRes);
+       if(data['status'] == 1) {
+         Processing processing = Processing(data);
+         Product productResult;
+         if (!customScan) {
+           productResult = await processing.checkIfCanEat(barcodeScanRes);
+         }
+         else {
+           productResult = await processing.checkIfCanEatWithCustomScan(
+               barcodeScanRes, customPrefs);
+         }
+         if(productResult.getimageURL() !='error') {processing.saveToDataBase(productResult);}
+        setState(() {
+           showS = false;
+         });
+         if (productResult.getdetails()["Error"] != null) {
+           Navigator.push(context, MaterialPageRoute(
+               builder: (context) => const ProductnotfoundPage()));
+         } else {
+           Navigator.push(context, MaterialPageRoute(
+               builder: (context) => ScanResult(Result: productResult)));
+         }
+       }
+       else if(data['status_verbose'] =="product not found" ) {
+         Navigator.push(context, MaterialPageRoute(
+             builder: (context) => const ProductnotfoundPage()));
        }
        else{
-         productResult = await processing.checkIfCanEatWithCustomScan(barcodeScanRes,customPrefs);
+         CoolAlert.show(
+             context: context,
+             type: CoolAlertType.error,
+             title: "Error",
+             text: "An Error occurred! please do Scan again.");
        }
-       processing.saveToDataBase(productResult);
-       setState(() {
-         showS=false;
-       });
-       if(productResult.getdetails()["Error"]!= null) {
-         Navigator.push(context, MaterialPageRoute(builder: (context)=>const ProductnotfoundPage()));
-       } else {
-         Navigator.push(context, MaterialPageRoute(builder: (context)=>ScanResult(Result: productResult)));
-       }
-     }
-     else{
-       CoolAlert.show(
-           context: context,
-           type: CoolAlertType.error,
-           title: "Error",
-           text: "An Error occurred! please do Scan again. $barcodeScanRes");
-     }
+
     }
     catch(e){
       if(!e.toString().contains('404')){

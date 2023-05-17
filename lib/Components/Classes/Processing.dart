@@ -165,8 +165,8 @@ class Processing {
     }
   }
   void setCategories(){
-    List<dynamic> originalCategories = _data['product']['categories_hierarchy'];
     try{
+      List<dynamic> originalCategories = _data['product']['categories_hierarchy'];
       for(int i=0;i<originalCategories.length;i++){
         String category = originalCategories[i];
         productCategories.add(category.substring(3));
@@ -236,9 +236,6 @@ class Processing {
     if(userPrefrences["HasCholesterol"] == true && productDetails["colesterol"] == true ) condition = false;
     if(userPrefrences["HasDiabetes"] == true && productDetails["diabeties"] == true ) condition = false;
     List<dynamic> ingrCantEat = userPrefrences['IngredientsCantEat'];
-    print("////////////////////////");
-    print(ingrCantEat);
-    print(ingredients);
     for(int i = 0;i<ingrCantEat.length;i++){
       for(int j =0;j<ingredients.length;j++){
         if(ingredients[j].toLowerCase().trim().contains(ingrCantEat[i].toString().toLowerCase().trim())) condition = false;
@@ -322,30 +319,32 @@ class Processing {
   }
 
   void saveToDataBase(Product p)async{
-    try{
-      await _firestore
-          .collection("UserScans")
-          .doc(_auth.currentUser!.email)
-          .update({p.getBarCode(): DateTime.now()});
-    }
-    catch(e){
-      await _firestore
-          .collection("UserScans")
-          .doc(_auth.currentUser!.email)
-          .set({p.getBarCode(): DateTime.now()});
-    }
-    try{
-      await _firestore
-          .collection("Products")
-          .doc(p.getBarCode())
-          .update(p.toMap());
-    }
-    catch(e){
-      await _firestore
-          .collection("Products")
-          .doc(p.getBarCode())
-          .set(p.toMap());
-    }
+    print(p.getname());
+    print("addding to data base");
+      try{
+        await _firestore
+            .collection("UserScans")
+            .doc(_auth.currentUser!.email)
+            .update({p.getBarCode(): DateTime.now()});
+      }
+      catch(e){
+        await _firestore
+            .collection("UserScans")
+            .doc(_auth.currentUser!.email)
+            .set({p.getBarCode(): DateTime.now()});
+      }
+      try{
+        await _firestore
+            .collection("Products")
+            .doc(p.getBarCode())
+            .update(p.toMap());
+      }
+      catch(e){
+        await _firestore
+            .collection("Products")
+            .doc(p.getBarCode())
+            .set(p.toMap());
+      }
   }
 
   Future<Product> checkIfCanEatWithCustomScan(String barcode, Map<String, dynamic> customPrefs) async{
