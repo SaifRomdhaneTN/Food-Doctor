@@ -13,6 +13,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:prototype/Components/Classes/Processing.dart';
 import 'package:prototype/Components/Classes/Product.dart';
 import 'package:prototype/Components/Classes/SearchParameters.dart';
+import 'package:prototype/Screens/ContactScreen.dart';
 import 'package:prototype/Screens/Recommendations.dart';
 import 'package:prototype/Screens/Account%20Handeling/AccountMain.dart';
 import 'package:prototype/Screens/History.dart';
@@ -326,7 +327,7 @@ class _MainScreenState extends State<MainScreen> {
                           const SizedBox(
                             height: 5,
                           ),
-                          Text("Please make sure to enter the name in english.",style:kFiltersOptionTextStyle.copyWith(fontSize: 12),textAlign: TextAlign.center,),
+                          Text("Please Note that the products in the database \n are saved in english and french.",style:kFiltersOptionTextStyle.copyWith(fontSize: 12),textAlign: TextAlign.center,),
                           const SizedBox(
                             height: 20,
                             width: 50,
@@ -758,6 +759,7 @@ class _MainScreenState extends State<MainScreen> {
                           PopupMenuItem(value:"My account", child: Text("My Account"),),
                           PopupMenuItem(value:"ScanHistory",child: Text("Scan History"),),
                           PopupMenuItem(value:"Recommendations",child: Text("Recommendations"),),
+                          PopupMenuItem(value:"Contact",child: Text("Contact Us"),),
                           PopupMenuItem(value: "Sign Out",child: Text("Sign out"),),
                         ];
                       },
@@ -786,6 +788,9 @@ class _MainScreenState extends State<MainScreen> {
                           }
                           if(value == 'Recommendations'){
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>const Recommendations()));
+                          }
+                          if(value == "Contact"){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const ContactScreen()));
                           }
                         },
                         child: const Material(

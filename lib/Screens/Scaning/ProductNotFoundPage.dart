@@ -7,12 +7,12 @@ class ProductnotfoundPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFEDF1D6),
+    return const Scaffold(
+      backgroundColor: Color(0xFFEDF1D6),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
+        children: [
           Image(image: AssetImage('assets/sademoji.gif'),width: 200,height: 200,),
           SizedBox(height:20,),
           Padding(

@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, non_constant_identifier_names
+// ignore_for_file: file_names, non_constant_identifier_names, empty_catches
 
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -140,7 +140,7 @@ class Processing {
       "vegan": vegan,
       "vegetarian": vegetarian,
       "Allergies": data['Allergies'],
-      "IngrCantEat": data['IngredientsCantEat'],
+      "IngredientsCantEat": data['IngredientsCantEat'],
       "HasCholesterol":data['HasCholesterol'],
       "HasDiabetes":data['HasDiabetes']
     };
@@ -166,14 +166,14 @@ class Processing {
   }
   void setCategories(){
     try{
-      List<dynamic> originalCategories = _data['product']['categories_hierarchy'];
+      List<dynamic> originalCategories = _data['product']['categories_tags'];
       for(int i=0;i<originalCategories.length;i++){
         String category = originalCategories[i];
         productCategories.add(category.substring(3));
       }
     }
     catch(e){
-      print(e.toString());
+
     }
   }
 
@@ -319,8 +319,6 @@ class Processing {
   }
 
   void saveToDataBase(Product p)async{
-    print(p.getname());
-    print("addding to data base");
       try{
         await _firestore
             .collection("UserScans")

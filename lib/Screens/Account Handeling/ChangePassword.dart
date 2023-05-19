@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, no_logic_in_create_state
+// ignore_for_file: file_names, no_logic_in_create_state, empty_catches
 
 import 'dart:convert';
 
@@ -52,11 +52,9 @@ class _ChangePasswordState extends State<ChangePassword> {
       await _firestore.collection("users").doc(_auth.currentUser!.email).update(
           {
             'passwordHash':sha256.convert(utf8.encode(newPass)).toString()
-          }).then((value) => print("worked"));
+          });
     }
     catch(e){
-      print("Error while updating password!");
-      print(e.toString());
     }
   }
 

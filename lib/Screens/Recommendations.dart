@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +24,6 @@ class _RecommendationsState extends State<Recommendations> {
     List<Map<String,dynamic>> products = querySnapshotOFProducts.docs.map((doc) => doc.data()).toList();
     DocumentSnapshot documentSnapshot = await firestore.collection("users").doc(auth.currentUser!.email).get();
     userPref= documentSnapshot.get('Preferences');
-    print(userPref);
     for(int i=0;i<products.length;i++){
       if(comparePref(products[i]['Details'],products[i]['Ingreidients'])){
         productsThatMatch.add(products[i]);

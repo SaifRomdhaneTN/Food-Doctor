@@ -1,5 +1,5 @@
 
-// ignore_for_file: file_names, use_build_context_synchronously
+// ignore_for_file: file_names, use_build_context_synchronously, empty_catches
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,7 +17,6 @@ import '../Components/BackgroundWidget.dart';
 
 import '../Components/WelcomeButton.dart';
 
-import '../constants.dart';
 class WelcomeScreen extends StatefulWidget {
   
   static String id = 'WelcomeScreen';
@@ -56,7 +55,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       Navigator.push(context, MaterialPageRoute(builder: (context)=>const RegisterGoogle()));
     }}
         catch(e){
-      print(e.toString());
         }
   }
  

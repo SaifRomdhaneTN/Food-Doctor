@@ -136,7 +136,7 @@ class _LoginPState extends State<LoginP> {
                     padding: const EdgeInsets.only(right: 60.0),
                     child: InkWell(
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>ForgotPassword()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ForgotPassword()));
                       },
                       child: const Text("Forgot password ?",style: TextStyle(
                         fontSize: 14,

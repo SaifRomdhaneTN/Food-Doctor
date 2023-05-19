@@ -9,9 +9,9 @@ class Product{
   final Map<String,dynamic> _details;
   final List<String> _ingreidients;
   final List<String> _categories;
-  final DateTime _LastScan;
+  final DateTime _lastScan;
 
-  Product(this._name, this._maker, this._imageURL, this._details, this._canEat, this._barcode, this._ingreidients, this._categories, this._LastScan);
+  Product(this._name, this._maker, this._imageURL, this._details, this._canEat, this._barcode, this._ingreidients, this._categories, this._lastScan);
 
   Map<String, dynamic> getdetails() => _details;
 
@@ -24,7 +24,7 @@ class Product{
   String getBarCode() => _barcode;
   List<String> getIngreidients() => _ingreidients;
   List<String> getCategories() => _categories;
-  DateTime getFirstScan()=>_LastScan;
+  DateTime getFirstScan()=>_lastScan;
   Map<String,dynamic> toMap(){
     return{
       'Name':_name,
@@ -34,7 +34,7 @@ class Product{
       'Details':_details,
       'Ingreidients':_ingreidients,
       'Categories':_categories,
-      'LastScan':_LastScan
+      'LastScan':_lastScan
     };
   }
 }

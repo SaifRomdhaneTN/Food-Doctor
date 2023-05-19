@@ -1,4 +1,4 @@
-// ignore_for_file: no_logic_in_create_state
+// ignore_for_file: no_logic_in_create_state, file_names
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -94,43 +94,61 @@ class _SearchResultState extends State<SearchResult> {
     if(badges.isNotEmpty) msg+="\n Here are the characteristics of the products Found :";
     super.initState();
   }
+
+  Future<bool> _onWillPop() async {
+    return false; //<-- SEE HERE
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: kCPGteenDark,
-        title: Text("Search Results",style:kTitleTextStyle2.copyWith(fontSize: 22,color: kCPGreenLight)),
-        centerTitle: true,
-      ),
-      backgroundColor: kCPWhite,
-      body:  SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(msg,style: kResultPIngrTextStyle.copyWith(fontWeight:  FontWeight.bold,fontSize: 16),textAlign: TextAlign.center,),
-            const SizedBox(
-              height: 10,
-            ),
-            Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: badges,
-            ),
-            const SizedBox(
-              height: 30,
-              width: 50,
-              child: Divider(
-                thickness: 3,
-                color: Color.fromRGBO(0, 0, 0, 0.8),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: kCPGteenDark,
+          title: Text("Search Results",style:kTitleTextStyle2.copyWith(fontSize: 22,color: kCPGreenLight)),
+          leading: InkWell(
+            onTap: (){
+              int count = 0;
+              Navigator.of(context).popUntil((_) => count++ >= 2);
+            },
+              child: const Icon(
+                Icons.arrow_back_ios,
+                color: kCPGreenLight,
+                size: 50,),
+          ),
+          centerTitle: true,
+        ),
+        backgroundColor: kCPWhite,
+        body:  SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(msg,style: kResultPIngrTextStyle.copyWith(fontWeight:  FontWeight.bold,fontSize: 16),textAlign: TextAlign.center,),
+              const SizedBox(
+                height: 10,
               ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: productWidgets,
-            )
-          ],
+              Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: badges,
+              ),
+              const SizedBox(
+                height: 30,
+                width: 50,
+                child: Divider(
+                  thickness: 3,
+                  color: Color.fromRGBO(0, 0, 0, 0.8),
+                ),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: productWidgets,
+              )
+            ],
+          ),
         ),
       ),
     );

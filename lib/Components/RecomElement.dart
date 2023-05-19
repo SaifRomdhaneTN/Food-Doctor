@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:prototype/Components/Classes/Product.dart';
 import 'package:prototype/Screens/ProductDetails.dart';

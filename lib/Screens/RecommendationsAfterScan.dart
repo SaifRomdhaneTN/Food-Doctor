@@ -1,4 +1,4 @@
-// ignore_for_file: no_logic_in_create_state
+// ignore_for_file: no_logic_in_create_state, file_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -63,7 +63,6 @@ class _RecommendationsAfterScanState extends State<RecommendationsAfterScan> {
         if(ingr[j].toLowerCase().trim().contains(ingrCantEat[i].toString().toLowerCase().trim())) condition = false;
       }
     }
-    print(condition);
     return condition;
   }
 

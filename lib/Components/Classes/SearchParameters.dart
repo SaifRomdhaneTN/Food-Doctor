@@ -1,7 +1,7 @@
 // ignore_for_file: file_names, non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:translator/translator.dart';
+
 
 class SearchParameters{
  final bool scaningWithProductName;
@@ -46,10 +46,8 @@ class SearchParameters{
 
   Future<bool> checkWithProductName(Map<String, dynamic> product) async {
     bool condition = false;
-    GoogleTranslator translator = GoogleTranslator();
-    String productNameFr = product['Name'];
-    Translation translation = await translator.translate(productNameFr,to: 'en');
-    String productName = translation.text;
+    String productNameWithDash = product['Name'];
+    String productName = productNameWithDash.replaceAll('-', " ");
     if(productName.toLowerCase().trim().contains(productNameParameter.toLowerCase().trim())) condition = true;
     return condition;
   }
@@ -65,8 +63,9 @@ class SearchParameters{
     int ingrThatMatchCounter =0;
     for(int i =0;i<ingrEnteredList.length;i++){
       for(int j =0;j<productIngr.length;j++){
-        if(productIngr[j].trim().toLowerCase().contains(ingrEnteredList[i].trim().toLowerCase())) {
+        if(productIngr[j].replaceAll("-", " ").trim().toLowerCase().contains(ingrEnteredList[i].trim().toLowerCase())) {
           ingrThatMatchCounter++;
+          break;
         }
       }
     }

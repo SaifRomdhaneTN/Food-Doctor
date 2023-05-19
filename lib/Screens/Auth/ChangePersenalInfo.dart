@@ -63,7 +63,7 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
                 const SizedBox(
                   height: 50.0,
                 ),
-                Text("Register",
+                const Text("Register",
                     textAlign: TextAlign.center,
                     style: kTitleTextStyle
                 ),

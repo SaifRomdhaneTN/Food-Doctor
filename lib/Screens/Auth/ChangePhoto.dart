@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unnecessary_null_comparison, file_names
 
 import 'dart:io';
 
@@ -72,7 +72,7 @@ class _ChangePhotoState extends State<ChangePhoto> {
                   onPressed: (){
                     pickUploadImage();
                   }),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               CircularButton(

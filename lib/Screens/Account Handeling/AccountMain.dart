@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, no_logic_in_create_state, use_build_context_synchronously
+// ignore_for_file: file_names, no_logic_in_create_state, use_build_context_synchronously, empty_catches
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -42,7 +42,6 @@ class _AccountMainState extends State<AccountMain> {
                         String? email = auth.currentUser!.email;
                         String? userID = auth.currentUser!.uid;
                         String providerId = auth.currentUser!.providerData.first.providerId;
-                        print("Yesss");
                         auth.currentUser!.delete();
                         if(providerId == 'google.com'){
                             GoogleSignIn googleSignIn = GoogleSignIn();
@@ -55,7 +54,7 @@ class _AccountMainState extends State<AccountMain> {
                                 'profilepic$userID.jpg').delete();
                           }
                           catch(e){
-                            print(e.toString());
+
                           }
                         }
                         await firestore.collection("users").doc(email).delete();
@@ -133,7 +132,7 @@ class _AccountMainState extends State<AccountMain> {
               onPressed: (){
                 String providerId = auth.currentUser!.providerData.first.providerId;
                 if(providerId != 'google.com') {
-                  String hashedPass = document.get('passwordHash');
+
                   Navigator.push(context, MaterialPageRoute(builder: (context)=> const ChangePassword()));
                 } else {
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>const SignedInWithGoogle(element: "Password")));
@@ -144,7 +143,6 @@ class _AccountMainState extends State<AccountMain> {
               onPressed: (){
                 String providerId = auth.currentUser!.providerData.first.providerId;
                 if(providerId != 'google.com') {
-                  String hashedPass = document.get('passwordHash');
                   Navigator.push(context, MaterialPageRoute(builder: (context)=> const ChangePhoto()));
                 } else {
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>const SignedInWithGoogle(element: "Profile photo",)));

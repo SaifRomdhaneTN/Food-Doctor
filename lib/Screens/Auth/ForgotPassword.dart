@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
+// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously, file_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
