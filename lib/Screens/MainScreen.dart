@@ -13,6 +13,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:prototype/Components/Classes/Processing.dart';
 import 'package:prototype/Components/Classes/Product.dart';
 import 'package:prototype/Components/Classes/SearchParameters.dart';
+import 'package:prototype/Screens/Admin/Dashboard.dart';
 import 'package:prototype/Screens/ContactScreen.dart';
 import 'package:prototype/Screens/Recommendations.dart';
 import 'package:prototype/Screens/Account%20Handeling/AccountMain.dart';
@@ -66,6 +67,14 @@ class _MainScreenState extends State<MainScreen> {
   late bool ingrsEnteredBool = false;
   late String ingrsEntered ='';
   late bool filtersSearchOn = false;
+
+  late List<PopupMenuEntry> popItems =[
+    const PopupMenuItem(value:"My account", child: Text("My Account"),),
+    const PopupMenuItem(value:"ScanHistory",child: Text("Scan History"),),
+    const PopupMenuItem(value:"Recommendations",child: Text("Recommendations"),),
+    const PopupMenuItem(value:"Contact",child: Text("Contact Us"),),
+    const PopupMenuItem(value: "Sign Out",child: Text("Sign out"),),
+  ];
 
   Future<void> _showFilterDialog() async {
     await showDialog<void>(
@@ -285,7 +294,7 @@ class _MainScreenState extends State<MainScreen> {
                   fontSize: 24,
                   fontFamily: 'EastMan',
                   fontWeight: FontWeight.bold,
-                  color: kCPGteenDark
+                  color: kCPGreenDark
                 ),
                 textAlign: TextAlign.center,
               ),//Filters Title
@@ -333,7 +342,7 @@ class _MainScreenState extends State<MainScreen> {
                             width: 50,
                             child: Divider(
                               thickness: 3,
-                              color: kCPGteenDark,
+                              color: kCPGreenDark,
                             ),
                           ),
                           Row(
@@ -373,7 +382,7 @@ class _MainScreenState extends State<MainScreen> {
                             width: 50,
                             child: Divider(
                               thickness: 3,
-                              color: kCPGteenDark,
+                              color: kCPGreenDark,
                             ),
                           ),
                           Text("Filters : ",style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold),),
@@ -518,7 +527,7 @@ class _MainScreenState extends State<MainScreen> {
                             width: 50,
                             child: Divider(
                               thickness: 3,
-                              color: kCPGteenDark,
+                              color: kCPGreenDark,
                             ),
                           ),
 
@@ -527,7 +536,7 @@ class _MainScreenState extends State<MainScreen> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               SimpleDialogOption(
-                                child:  Text('Apply',style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold,color: kCPGteenDark)),
+                                child:  Text('Apply',style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold,color: kCPGreenDark)),
                                 onPressed: ()  async {
                                   if(!halalSearch && !veganSearch && !vegitarianSearch && !lactosFreeSearch && !glutenFreeSearch && !nutFreeSearch && !fishFreeSearch && !lowFatSearch && !lowSaltSearch) {
                                     filtersSearchOn = false;
@@ -564,13 +573,13 @@ class _MainScreenState extends State<MainScreen> {
                                 },
                               ),
                               SimpleDialogOption(
-                                child:  Text('Cancel',style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold,color: kCPGteenDark)),
+                                child:  Text('Cancel',style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold,color: kCPGreenDark)),
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
                               ),
                               SimpleDialogOption(
-                                child:  Text('Reset',style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold,color: kCPGteenDark)),
+                                child:  Text('Reset',style: kFiltersOptionTextStyle.copyWith(fontWeight: FontWeight.bold,color: kCPGreenDark)),
                                 onPressed: () async {
                                   resetSearch();
                                   Navigator.pop(context);
@@ -668,6 +677,24 @@ class _MainScreenState extends State<MainScreen> {
     ingrsEnteredBool = false;
     ingrsEntered= "";
   }
+  void checkAdmin() async {
+    DocumentSnapshot documentSnapshot =await  firestore.collection("admin").doc("Information").get();
+    String adminEmail = documentSnapshot.get("email");
+    if(auth.currentUser!.email == adminEmail){
+      setState(() {
+        popItems = [
+          const PopupMenuItem(value:"My account", child: Text("My Account"),),
+          const PopupMenuItem(value:"ScanHistory",child: Text("Scan History"),),
+          const PopupMenuItem(value:"Recommendations",child: Text("Recommendations"),),
+          const PopupMenuItem(value:"Contact",child: Text("Contact Us"),),
+          const PopupMenuItem(value:"ManageAccounts",child: Text("Manage Accounts"),),
+          const PopupMenuItem(value:"ManageProducts",child: Text("Manage Products"),),
+          const PopupMenuItem(value:"Dashboard",child: Text("Dashboard"),),
+          const PopupMenuItem(value: "Sign Out",child: Text("Sign out"),),
+        ];
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -690,6 +717,7 @@ class _MainScreenState extends State<MainScreen> {
         }
       }
     });
+    checkAdmin();
     super.initState();
   }
   Future<bool> _onWillPop() async {
@@ -755,13 +783,7 @@ class _MainScreenState extends State<MainScreen> {
                       PopupMenuButton(
                         // icon: const Icon(Icons.list_outlined,color:Colors.white ,size: 40,weight: 5,),
                         itemBuilder: (BuildContext bc){
-                        return const[
-                          PopupMenuItem(value:"My account", child: Text("My Account"),),
-                          PopupMenuItem(value:"ScanHistory",child: Text("Scan History"),),
-                          PopupMenuItem(value:"Recommendations",child: Text("Recommendations"),),
-                          PopupMenuItem(value:"Contact",child: Text("Contact Us"),),
-                          PopupMenuItem(value: "Sign Out",child: Text("Sign out"),),
-                        ];
+                        return popItems;
                       },
                         onSelected: (value) async {
                           if(value == "Sign Out"){
@@ -792,6 +814,7 @@ class _MainScreenState extends State<MainScreen> {
                           if(value == "Contact"){
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>const ContactScreen()));
                           }
+                          if(value == "Dashboard") Navigator.push(context, MaterialPageRoute(builder: (context)=>const Dashboard()));
                         },
                         child: const Material(
                             shape:RoundedRectangleBorder(

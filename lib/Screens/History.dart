@@ -118,7 +118,7 @@ class _HistoryState extends State<History> {
         height: 20,
         width: 50,
         child: Divider(
-          color: kCPGteenDark,
+          color: kCPGreenDark,
           thickness: 1,
         ),
       ));
@@ -500,7 +500,7 @@ class _HistoryState extends State<History> {
               height: 20,
               width: 50,
               child: Divider(
-                color: kCPGteenDark,
+                color: kCPGreenDark,
                 thickness: 1,
               ),
             ));

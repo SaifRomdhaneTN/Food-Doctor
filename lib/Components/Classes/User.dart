@@ -6,12 +6,13 @@ class UserLocal {
   late int _age;
   late String _countryofResidence;
   late String _phoneNumber;
+  late String _countryCode;
   late bool _filledform;
 
 
 
 
-  UserLocal(this._fullname, this._dateofbirth, this._age, this._countryofResidence,
+  UserLocal(this._fullname, this._dateofbirth, this._age, this._countryofResidence,this._countryCode,
       this._phoneNumber);
 
   String getfullname() => _fullname;
@@ -37,6 +38,11 @@ class UserLocal {
   void countryofResidence(String value) {
     _countryofResidence = value;
   }
+  String getCountryCode() => _countryCode;
+
+  void countryCode(String value) {
+    _countryCode = value;
+  }
 
   String getphoneNumber() => _phoneNumber;
 
@@ -56,6 +62,7 @@ class UserLocal {
     'DateOfBirth' : _dateofbirth,
     'Age' : _age,
     'Country':_countryofResidence,
+    'CountryCode':_countryCode,
     'PhoneNumber' : _phoneNumber,
     'FilledForm' : _filledform
   };

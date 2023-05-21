@@ -53,7 +53,7 @@ class _LoginPState extends State<LoginP> {
       }}
       else {
         _auth.signOut();
-        CoolAlert.show(context: context, type: CoolAlertType.warning,title: 'Email not verified',text: "Please verify your eamil. check your junk mail if you didn't find it in the main section");}
+        CoolAlert.show(context: context, type: CoolAlertType.warning,title: 'Email not verified',text: "Please verify your email. check your junk mail if you didn't find it in the main section");}
     }
     catch(e){
       setState(() {

@@ -70,7 +70,7 @@ class RecomElement extends StatelessWidget {
                     height: 40.0,
                     child: VerticalDivider(
                       thickness: 3,
-                      color: kCPGteenDark,
+                      color: kCPGreenDark,
                     ),
                   ),
                   Expanded(

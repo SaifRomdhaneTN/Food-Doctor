@@ -27,6 +27,7 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
   late String fullName='';
   late String phoneNumber='';
   String countryName ='Unites States';
+  late String countryCode="US";
   String phoneCode="1";
   bool pnvaildation = false;
 
@@ -128,6 +129,7 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
                         setState(() {
                           countryName=country.name;
                           phoneCode = country.phoneCode;
+                          countryCode = country.countryCode;
                         });
                       },
                     );},
@@ -162,19 +164,17 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
                     if(_formKey.currentState!.validate()){
                       FirebaseFirestore firestore = FirebaseFirestore.instance;
                       FirebaseAuth auth =FirebaseAuth.instance;
-                      DocumentSnapshot document =await firestore.collection("users").doc(auth.currentUser!.email).get();
-                      Map<String,dynamic> preferences = document.get('Preferences');
-                      firestore.collection("users").doc(auth.currentUser!.email).set({
+                      firestore.collection("users").doc(auth.currentUser!.email).update({
                         'email':auth.currentUser!.email,
                         'Additonal Information':{
                           'Age':age,
                           'Country':countryName,
+                          'CountryCode':countryCode,
                           'DateOfBirth':selectedDate,
                           'FilledForm':true,
                           'FullName':fullName,
                           'PhoneNumber':phoneNumber
                         },
-                        'Preferences':preferences
                       });
                       Navigator.push(context,MaterialPageRoute(builder: (context)=>const MainScreen()));
                     }

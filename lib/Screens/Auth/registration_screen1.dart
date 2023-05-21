@@ -31,6 +31,7 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
   late int Age=0;
   late String FullName='';
   late String PhoneNumber='';
+  late String CountryCode = 'US';
   String countryName ='Unites States';
   String phoneCode="1";
   bool pnvaildation = false;
@@ -137,6 +138,8 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                           setState(() {
                             countryName=country.name;
                             phoneCode = country.phoneCode;
+                            CountryCode =country.countryCode;
+                            print(CountryCode);
                           });
                         },
                       );},
@@ -170,7 +173,7 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                   RegScreenButton(
                     onPressed: (){
                       if(_formKey.currentState!.validate()){
-                        UserLocal user = UserLocal(FullName, selectedDate, Age , countryName, PhoneNumber);
+                        UserLocal user = UserLocal(FullName, selectedDate, Age , countryName, PhoneNumber,CountryCode);
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>RegistrationScreenP2(tempuser: user)));
                       }
                     },

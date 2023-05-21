@@ -319,6 +319,12 @@ class Processing {
   }
 
   void saveToDataBase(Product p)async{
+      Map<String,dynamic> mapOfProduct = p.toMap();
+      DocumentSnapshot documentSnapshotUser =await _firestore.collection("users").doc(_auth.currentUser!.email).get();
+      int numScansUSer = documentSnapshotUser.get("NumberOfScans");
+      print("current user scan number: $numScansUSer");
+      await _firestore.collection("users").doc(_auth.currentUser!.email).update(
+          {"NumberOfScans":numScansUSer+1});
       try{
         await _firestore
             .collection("UserScans")
@@ -331,17 +337,26 @@ class Processing {
             .doc(_auth.currentUser!.email)
             .set({p.getBarCode(): DateTime.now()});
       }
+
       try{
+        DocumentSnapshot documentSnapshot = await _firestore.collection("Products").doc(p.getBarCode()).get();
+        int numOfScans = documentSnapshot.get("numberOfScans");
+        print("current product numOfScans : $numOfScans");
+        mapOfProduct.addAll({
+          "numberOfScans":numOfScans+1
+        });
+        print("current product : $mapOfProduct");
         await _firestore
             .collection("Products")
             .doc(p.getBarCode())
-            .update(p.toMap());
+            .update(mapOfProduct);
       }
       catch(e){
+        mapOfProduct.addAll({"numberOfScans": 0});
         await _firestore
             .collection("Products")
             .doc(p.getBarCode())
-            .set(p.toMap());
+            .set(mapOfProduct);
       }
   }
 

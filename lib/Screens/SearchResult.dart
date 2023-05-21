@@ -105,7 +105,7 @@ class _SearchResultState extends State<SearchResult> {
       onWillPop: _onWillPop,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: kCPGteenDark,
+          backgroundColor: kCPGreenDark,
           title: Text("Search Results",style:kTitleTextStyle2.copyWith(fontSize: 22,color: kCPGreenLight)),
           leading: InkWell(
             onTap: (){

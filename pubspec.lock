@@ -581,6 +581,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  locale_emoji:
+    dependency: transitive
+    description:
+      name: locale_emoji
+      sha256: "9207bc40ba6c0b222216e92fa4b89a09d8d91e5637620b34c82320de578679ee"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
+  locale_emoji_flutter:
+    dependency: "direct main"
+    description:
+      name: locale_emoji_flutter
+      sha256: "4856479df64f9297a92acd7c5315b6ccec76212405b839949d7dda1adaa324a1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   lottie:
     dependency: transitive
     description:
@@ -709,6 +725,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  pie_chart:
+    dependency: "direct main"
+    description:
+      name: pie_chart
+      sha256: "5dba6d0eb4718e8ed00a9079361cd8947c3f84ac5a5d76f05a27f4ec5e27589e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.3.2"
   platform:
     dependency: transitive
     description:

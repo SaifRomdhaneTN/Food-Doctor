@@ -90,7 +90,8 @@ const kFormTextStyle = TextStyle(
 const kCPWhite = Color(0xFFEDF1D6);
 const kCPGreenLight = Color(0xFF9DC08B);
 const kCPGreenMid = Color(0xFF609966);
-const kCPGteenDark = Color(0xFF40513B);
+const kCPGreenMid2 = Color(0xFF3E6B43);
+const kCPGreenDark = Color(0xFF40513B);
 
 final kButtonStyleAppBar = ButtonStyle(
   backgroundColor: MaterialStateProperty.resolveWith((states) => Colors.white),
@@ -129,7 +130,7 @@ borderSide: BorderSide(color: kCPGreenLight,width: 2.0),
 borderRadius: BorderRadius.all(Radius.circular(10.0)),
 ),
 focusedBorder: OutlineInputBorder(
-borderSide: BorderSide(color: kCPGteenDark, width: 3.0),
+borderSide: BorderSide(color: kCPGreenDark, width: 3.0),
 borderRadius: BorderRadius.all(Radius.circular(10.0)),
 ),
 filled: true,

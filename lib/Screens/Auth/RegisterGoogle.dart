@@ -26,6 +26,7 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
   late int age=0;
   late String fullName='';
   late String phoneNumber='';
+  late String countryCode = 'Us';
   String countryName ='Unites States';
   String phoneCode="1";
   bool pnvaildation = false;
@@ -128,6 +129,7 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                         setState(() {
                           countryName=country.name;
                           phoneCode = country.phoneCode;
+                          countryCode = country.countryCode;
                         });
                       },
                     );},
@@ -168,13 +170,16 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                         'Additonal Information':{
                           'Age':age,
                           'Country':countryName,
+                          'CountryCode':countryCode,
                           'DateOfBirth':selectedDate,
                           'FilledForm':false,
                           'FullName':fullName,
                           'PhoneNumber':phoneNumber
                         },
                         'customScanOn':false,
-                        'customScanPref':{}
+                        'NumberOfScans':0,
+                        'customScanPref':{},
+                        'imageUrl':auth.currentUser!.photoURL
                       });
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>const FormScreen()));
                     }

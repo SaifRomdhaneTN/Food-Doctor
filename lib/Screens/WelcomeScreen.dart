@@ -43,6 +43,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     final UserCredential userCredential =  await auth.signInWithCredential(credential);
     DocumentSnapshot document = await firestore.collection("users").doc(userCredential.user!.email).get();
     bool documentExists =document.exists;
+
     if(documentExists) {
       dynamic usersinfo =document.get("Additonal Information");
       if(usersinfo['FilledForm']==true) {

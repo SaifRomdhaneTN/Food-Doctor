@@ -13,7 +13,6 @@ import 'package:prototype/Components/BackgroundWidget.dart';
 import 'package:prototype/Components/Classes/User.dart';
 import 'package:prototype/Components/InfoFormButton.dart';
 import 'package:prototype/Components/RegScreenButton.dart';
-import 'package:prototype/Screens/Auth/LoginPage.dart';
 import 'package:prototype/constants.dart';
 
 
@@ -47,7 +46,7 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
           setState(() {
             showS=false;
           });
-          CoolAlert.show(context: context, type: CoolAlertType.success,title: "Registration complete",text: "Please verify your email. check you junk mail as it would most likely the mail will be sent there.");
+          await CoolAlert.show(context: context, type: CoolAlertType.success,title: "Registration complete",text: "Please verify your email. check you junk mail as it would most likely the mail will be sent there.");
           return true;
         }
         catch(e){
@@ -77,6 +76,7 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
     'passwordHash':sha256.convert(utf8.encode(pwd)).toString(),
     'Additonal Information':u.toJson(),
     'customScanOn':false,
+    'NumberOfScans':0,
     'customScanPref':{}
   };
 
@@ -201,7 +201,7 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                           });
                           if (_formKey.currentState!.validate()) {
                             bool result = await CreateUser(u);
-                            if(result) Navigator.pushNamed(context, LoginP.id);
+                            if(result) Navigator.popUntil(context, (route) => route.isFirst);
                           }
                           else {
                             setState(() {

@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -38,7 +39,16 @@ class _ChangePhotoState extends State<ChangePhoto> {
   }
   void addNewPhoto() async{
     FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
     await auth.currentUser!.updatePhotoURL(newPhotoUrl);
+    try{
+     await firestore.collection("users").doc(auth.currentUser!.email).update(
+          {'imageUrl':newPhotoUrl});
+    }
+    catch(e){
+      await firestore.collection("users").doc(auth.currentUser!.email).set(
+          {'imageUrl':newPhotoUrl},SetOptions(merge: true));
+    }
     Navigator.popUntil(context, ModalRoute.withName(MainScreen.id));
   }
   @override

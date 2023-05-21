@@ -77,7 +77,7 @@ class _RecommendationsState extends State<Recommendations> {
               children: [
                 const Image(image: AssetImage('assets/sademoji.gif'),height: 200,width: 200,),
                 Text("Sorry... There are no products in our database that matches your needs."
-                    "\n weather that being similiar to the product scanned or if it is to your preferences.",style: kTitleTextStyle2.copyWith(fontSize: 22,color: kCPGteenDark),textAlign: TextAlign.center,),
+                    "\n weather that being similiar to the product scanned or if it is to your preferences.",style: kTitleTextStyle2.copyWith(fontSize: 22,color: kCPGreenDark),textAlign: TextAlign.center,),
               ],
             ));
       });}
