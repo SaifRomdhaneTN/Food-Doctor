@@ -14,6 +14,7 @@ import 'package:prototype/Components/Classes/Processing.dart';
 import 'package:prototype/Components/Classes/Product.dart';
 import 'package:prototype/Components/Classes/SearchParameters.dart';
 import 'package:prototype/Screens/Admin/Dashboard.dart';
+import 'package:prototype/Screens/Admin/ProductManagement.dart';
 import 'package:prototype/Screens/ContactScreen.dart';
 import 'package:prototype/Screens/Recommendations.dart';
 import 'package:prototype/Screens/Account%20Handeling/AccountMain.dart';
@@ -814,6 +815,9 @@ class _MainScreenState extends State<MainScreen> {
                           if(value == "Contact"){
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>const ContactScreen()));
                           }
+                          if(value == "ManageProducts") {
+                            Navigator.push(context,MaterialPageRoute(builder: (context)=>const ProductManagement()));
+                          }
                           if(value == "Dashboard") Navigator.push(context, MaterialPageRoute(builder: (context)=>const Dashboard()));
                         },
                         child: const Material(
@@ -904,16 +908,13 @@ class _MainScreenState extends State<MainScreen> {
            showS = false;
          });
          if (productResult.getdetails()["Error"] != null) {
-           Navigator.push(context, MaterialPageRoute(
-               builder: (context) => const ProductnotfoundPage()));
+           Navigator.push(context, MaterialPageRoute(builder: (context) => const ProductnotfoundPage()));
          } else {
-           Navigator.push(context, MaterialPageRoute(
-               builder: (context) => ScanResult(Result: productResult)));
+           Navigator.push(context, MaterialPageRoute(builder: (context) => ScanResult(Result: productResult)));
          }
        }
-       else if(data['status_verbose'] =="product not found" ) {
-         Navigator.push(context, MaterialPageRoute(
-             builder: (context) => const ProductnotfoundPage()));
+       else if(data['status_verbose'] == "product not found") {
+         Navigator.push(context, MaterialPageRoute(builder: (context) => const ProductnotfoundPage()));
        }
        else{
          CoolAlert.show(
@@ -952,10 +953,10 @@ class _MainScreenState extends State<MainScreen> {
       if (e is CameraException) {
         switch (e.code) {
           case 'CameraAccessDenied':
-          // Handle access errors here.
+
             break;
           default:
-          // Handle other errors here.
+
             break;
         }
       }

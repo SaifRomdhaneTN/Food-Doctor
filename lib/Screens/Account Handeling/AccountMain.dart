@@ -27,7 +27,7 @@ class _AccountMainState extends State<AccountMain> {
   late ImageProvider image;
   _AccountMainState(this.document);
 
-  Future<void> _showAllergiesDialog() async {
+  Future<void> _showDeleteDialog() async {
     await showDialog<void>(
         context: context,
         builder: (BuildContext context) {
@@ -150,7 +150,7 @@ class _AccountMainState extends State<AccountMain> {
               },),
             AccountButton(
               text: 'Delete Account',
-              onPressed: _showAllergiesDialog,),
+              onPressed: _showDeleteDialog,),
           ],
         ),
       ),

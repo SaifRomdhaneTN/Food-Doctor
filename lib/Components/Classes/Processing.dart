@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:prototype/Components/Classes/Product.dart';
@@ -322,20 +323,25 @@ class Processing {
       Map<String,dynamic> mapOfProduct = p.toMap();
       DocumentSnapshot documentSnapshotUser =await _firestore.collection("users").doc(_auth.currentUser!.email).get();
       int numScansUSer = documentSnapshotUser.get("NumberOfScans");
-      print("current user scan number: $numScansUSer");
       await _firestore.collection("users").doc(_auth.currentUser!.email).update(
           {"NumberOfScans":numScansUSer+1});
       try{
         await _firestore
             .collection("UserScans")
             .doc(_auth.currentUser!.email)
-            .update({p.getBarCode(): DateTime.now()});
+            .update({
+          p.getBarCode(): DateTime.now(),
+          "email":_auth.currentUser!.email
+        });
       }
       catch(e){
         await _firestore
             .collection("UserScans")
             .doc(_auth.currentUser!.email)
-            .set({p.getBarCode(): DateTime.now()});
+            .set({
+          p.getBarCode(): DateTime.now(),
+          "email":_auth.currentUser!.email
+            });
       }
 
       try{
@@ -358,6 +364,22 @@ class Processing {
             .doc(p.getBarCode())
             .set(mapOfProduct);
       }
+  }
+  static Future<bool>  saveToDataBaseAdmin(Product p)async{
+    Map<String,dynamic> mapOfProduct = p.toMap();
+    FirebaseFirestore  firestore = FirebaseFirestore.instance;
+    try{
+      mapOfProduct.addAll({"numberOfScans": 0});
+      await firestore
+          .collection("Products")
+          .doc(p.getBarCode())
+          .set(mapOfProduct);
+      return true;
+    }
+    catch(e){
+      print(e.toString());
+      return false;
+    }
   }
 
   Future<Product> checkIfCanEatWithCustomScan(String barcode, Map<String, dynamic> customPrefs) async{

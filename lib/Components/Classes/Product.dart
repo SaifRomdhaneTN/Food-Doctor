@@ -64,6 +64,31 @@ class Product{
         Category,
         lastScan);
   }
+
+  static Product MapToProductForDisplay(Map<String,dynamic> product) {
+    Timestamp lastS = product['LastScan'];
+    DateTime lastScan = lastS.toDate();
+    List<String> Ingr = [];
+    List<dynamic> IngrD = product["Ingreidients"];
+    for(int i=0;i<IngrD.length;i++){
+      Ingr.add(IngrD[i].toString());
+    }
+    List<String> Category = [];
+    List<dynamic> CategoryD = product["Ingreidients"];
+    for(int i=0;i<CategoryD.length;i++){
+      Category.add(CategoryD[i].toString());
+    }
+    return Product(
+        product["Name"],
+        product["Maker"],
+        product["ImageUrl"],
+        product["Details"],
+        "",
+        product["Barcode"],
+        Ingr,
+        Category,
+        lastScan);
+  }
   
 
 }
