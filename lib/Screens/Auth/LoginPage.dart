@@ -32,28 +32,12 @@ class _LoginPState extends State<LoginP> {
   late String pwd;
   bool showS = false;
   final _formKey = GlobalKey<FormState>();
-  Future<void> getUserFilledFormProperty( ) async {
-    try{
-      UserCredential userCredentials = await _auth.signInWithEmailAndPassword(email: email.trim(), password: pwd);
-      QuerySnapshot  usersAditionalInfo = await _firestore.
-      collection('users').
-      where('email',isEqualTo: userCredentials.user!.email).get();
-      dynamic usersinfo =usersAditionalInfo.docs.first.get("Additonal Information");
-      bool filledForm = usersinfo["FilledForm"];
 
-      setState(() {
-        showS=false;
-      });
-      if(userCredentials.user!.emailVerified){
-      if(filledForm == false){
-        Navigator.pushNamed(context, FormScreen.id);
-      }
-      else{
-        Navigator.pushNamed(context, MainScreen.id);
-      }}
-      else {
-        _auth.signOut();
-        CoolAlert.show(context: context, type: CoolAlertType.warning,title: 'Email not verified',text: "Please verify your email. check your junk mail if you didn't find it in the main section");}
+  Future<void> getUserFilledFormProperty( ) async {
+    DocumentSnapshot documentSnapshotAccountsDel = await _firestore.collection("admin").doc("DeletedAccounts").get();
+    List<dynamic> accountsDeleted =documentSnapshotAccountsDel.get("emails") ;
+    try {
+      await _auth.signInWithEmailAndPassword(email: email.trim(), password: pwd);
     }
     catch(e){
       setState(() {
@@ -65,17 +49,58 @@ class _LoginPState extends State<LoginP> {
       } else if (e.toString().contains("wrong-password")) {
         msg="Wrong Password";
       }
-     else if (e.toString().contains("invalid-email")) {
-    msg="Invalid Email";
+      else if (e.toString().contains("invalid-email")) {
+        msg="Invalid Email";
+      }
+      else {
+        msg = e.toString();
+      }
+      CoolAlert.show(
+          context: context,
+          type: CoolAlertType.error,
+          text: msg);
     }
-     else {
-       msg = e.toString();
-     }
-    CoolAlert.show(
-    context: context,
-    type: CoolAlertType.error,
-    text: msg);
-    }
+      try{
+        DocumentSnapshot documentSnapshot = await _firestore.collection("users").doc(_auth.currentUser!.email).get();
+        Map<String,dynamic> usersinfo =documentSnapshot.get("Additonal Information");
+        bool filledForm = usersinfo["FilledForm"];
+
+        setState(() {
+          showS=false;
+        });
+        if(_auth.currentUser!.emailVerified){
+          await _firestore.collection("users").doc(_auth.currentUser!.email).update({'LoggedIn':true,});
+          if(filledForm == false){
+            Navigator.pushNamed(context, FormScreen.id);
+          }
+          else{
+            Navigator.pushNamed(context, MainScreen.id);
+          }}
+        else {
+          _auth.signOut();
+          CoolAlert.show(context: context, type: CoolAlertType.warning,title: 'Email not verified',text: "Please verify your email. check your junk mail if you didn't find it in the main section");}
+      }
+      catch(e){
+      if(accountsDeleted.contains(_auth.currentUser!.email)){
+        _auth.currentUser!.delete();
+        await CoolAlert.show(
+            context: context,
+            type: CoolAlertType.warning,
+            title: "Account Deleted",
+            text: "It seems your account have been deleted by an admin. \n "
+                "If you need further details please send an email to this address : saif.romtn@gmail.com");
+      }
+      else{
+        await CoolAlert.show(
+            context: context,
+            type: CoolAlertType.warning,
+            text: e.toString());
+      }
+        setState(() {
+          showS=false;
+        });
+
+      }
   }
 
 

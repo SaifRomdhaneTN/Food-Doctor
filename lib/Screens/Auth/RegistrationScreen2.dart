@@ -77,6 +77,7 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
     'Additonal Information':u.toJson(),
     'customScanOn':false,
     'NumberOfScans':0,
+    'LoggedIn':false,
     'customScanPref':{}
   };
 

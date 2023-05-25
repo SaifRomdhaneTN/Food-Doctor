@@ -178,6 +178,7 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                         },
                         'customScanOn':false,
                         'NumberOfScans':0,
+                        'LoggedIn':false,
                         'customScanPref':{},
                         'imageUrl':auth.currentUser!.photoURL
                       });

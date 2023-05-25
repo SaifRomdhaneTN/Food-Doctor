@@ -2,6 +2,7 @@
 // ignore_for_file: file_names, use_build_context_synchronously, empty_catches
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -31,20 +32,29 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   late bool showS = false;
 
   void signInWithGoogle() async{
-    try{FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseFirestore firestore = FirebaseFirestore.instance;
+    FirebaseAuth auth = FirebaseAuth.instance;
     final GoogleSignIn googleSignIn = GoogleSignIn();
-    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken
-    );
-    final UserCredential userCredential =  await auth.signInWithCredential(credential);
-    DocumentSnapshot document = await firestore.collection("users").doc(userCredential.user!.email).get();
+    DocumentSnapshot documentSnapshotAccountsDel = await firestore.collection("admin").doc("DeletedAccounts").get();
+    List<dynamic> accountsDeleted =documentSnapshotAccountsDel.get("emails") ;
+    try {
+
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken
+      );
+      await auth.signInWithCredential(credential);
+    }
+    catch(e){
+      CoolAlert.show(context: context, type: CoolAlertType.error,text: e.toString());
+    }
+    DocumentSnapshot document = await firestore.collection("users").doc(auth.currentUser!.email).get();
     bool documentExists =document.exists;
 
     if(documentExists) {
+      await firestore.collection("users").doc(auth.currentUser!.email).update({"LoggedIn":true});
       dynamic usersinfo =document.get("Additonal Information");
       if(usersinfo['FilledForm']==true) {
         Navigator.push(context, MaterialPageRoute(builder: (context)=>const MainScreen()));
@@ -53,10 +63,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       }
     }
     else{
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>const RegisterGoogle()));
-    }}
-        catch(e){
-        }
+      if(!accountsDeleted.contains(auth.currentUser!.email)) {
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>const RegisterGoogle()));
+      } else {
+        auth.currentUser!.delete();
+        googleSignIn.signOut();
+        await CoolAlert.show(
+            context: context,
+            type: CoolAlertType.warning,
+            title: "Account Deleted",
+            text: "It seems your account have been deleted by an admin. \n "
+                "If you need further details please send an email to this address : saif.romtn@gmail.com");
+      }
+    }
+
   }
  
   @override

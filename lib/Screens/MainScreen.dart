@@ -13,6 +13,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:prototype/Components/Classes/Processing.dart';
 import 'package:prototype/Components/Classes/Product.dart';
 import 'package:prototype/Components/Classes/SearchParameters.dart';
+import 'package:prototype/Screens/Admin/AccountsManagement.dart';
 import 'package:prototype/Screens/Admin/Dashboard.dart';
 import 'package:prototype/Screens/Admin/ProductManagement.dart';
 import 'package:prototype/Screens/ContactScreen.dart';
@@ -789,6 +790,7 @@ class _MainScreenState extends State<MainScreen> {
                         onSelected: (value) async {
                           if(value == "Sign Out"){
                             FirebaseAuth auth =FirebaseAuth.instance;
+                            await firestore.collection("users").doc(auth.currentUser!.email).update({"LoggedIn":false});
                             String providerId = auth.currentUser!.providerData.first.providerId;
                             if(providerId == 'google.com'){
                               GoogleSignIn googleSignIn = GoogleSignIn();
@@ -817,6 +819,9 @@ class _MainScreenState extends State<MainScreen> {
                           }
                           if(value == "ManageProducts") {
                             Navigator.push(context,MaterialPageRoute(builder: (context)=>const ProductManagement()));
+                          }
+                          if(value == "ManageAccounts"){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const AccountsManagement()));
                           }
                           if(value == "Dashboard") Navigator.push(context, MaterialPageRoute(builder: (context)=>const Dashboard()));
                         },
