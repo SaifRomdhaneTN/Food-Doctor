@@ -13,6 +13,7 @@ import 'package:prototype/Screens/Auth/ForgotPassword.dart';
 import 'package:prototype/Screens/FormScreen.dart';
 import 'package:prototype/Screens/MainScreen.dart';
 import 'package:prototype/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -70,6 +71,8 @@ class _LoginPState extends State<LoginP> {
         });
         if(_auth.currentUser!.emailVerified){
           await _firestore.collection("users").doc(_auth.currentUser!.email).update({'LoggedIn':true,});
+          SharedPreferences prefs =await SharedPreferences.getInstance();
+          prefs.setString("email", _auth.currentUser!.email!);
           if(filledForm == false){
             Navigator.pushNamed(context, FormScreen.id);
           }

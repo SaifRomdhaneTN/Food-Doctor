@@ -11,24 +11,29 @@ import 'package:prototype/Screens/MainScreen.dart';
 import 'package:prototype/Screens/WelcomeScreen.dart';
 import 'package:prototype/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ...
 
 import 'Screens/Auth/RegistrationScreen2.dart';
 
 late List<CameraDescription> cameras;
+String startingRoute = WelcomeScreen.id;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   cameras = await availableCameras();
-  runApp(const MyApp());
+  SharedPreferences prefs =await SharedPreferences.getInstance();
+  var email=prefs.getString("email");
+  startingRoute= email==null?WelcomeScreen.id:MainScreen.id;
+  runApp( MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  // This widget is the root of your application.
+   MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     UserLocal placeholderuser = UserLocal("PlaceHolder",DateTime.now(),999,'nowhere','nophonenumber',"");
@@ -40,7 +45,7 @@ class MyApp extends StatelessWidget {
           fillColor: MaterialStateProperty.resolveWith((states) => const Color(0xFF609966))
         )
       ),
-      initialRoute: WelcomeScreen.id,
+      initialRoute: startingRoute,
       routes: {
         WelcomeScreen.id : (context) =>  const WelcomeScreen(),
         RegistrationScreenP1.id:(context)=> const RegistrationScreenP1(),

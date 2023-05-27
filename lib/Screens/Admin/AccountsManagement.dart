@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:prototype/Components/AccountManageElement.dart';
 import 'package:prototype/Components/CircularButton.dart';
@@ -86,17 +87,18 @@ class _AccountsManagementState extends State<AccountsManagement> {
                   return i;
                 });
                 for(int i =0;i<users.length;i++){
-                  ImageProvider image ;
+                  ImageProvider image = const AssetImage('assets/person.png'); ;
                   if(users[i]['imageUrl']!=null) {
-
                     image = NetworkImage(users[i]['imageUrl']);
                   }
-                  else {
-                    image = const AssetImage('assets/person.png');
+                  Color onlineColor = Colors.red;
+                  if(users[i]['LoggedIn']==true) onlineColor = Colors.green;
+                  if(users[i]['email'] != FirebaseAuth.instance.currentUser!.email) {
+                    elements.add(AccountManageElement(
+                    image: image,
+                    email: users[i]['email'],
+                    onlineColor: onlineColor,));
                   }
-                  elements.add(AccountManageElement(
-                      image: image,
-                      email: users[i]['email']));
                 }
                 return Column(
                     mainAxisAlignment: MainAxisAlignment.center,

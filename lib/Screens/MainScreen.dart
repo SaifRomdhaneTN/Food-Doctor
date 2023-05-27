@@ -23,9 +23,11 @@ import 'package:prototype/Screens/History.dart';
 import 'package:prototype/Screens/Scaning/ProductNotFoundPage.dart';
 import 'package:prototype/Screens/Scaning/ScanResult.dart';
 import 'package:prototype/Screens/SearchResult.dart';
+import 'package:prototype/Screens/WelcomeScreen.dart';
 import 'package:prototype/constants.dart';
 import 'package:prototype/main.dart' as main;
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class MainScreen extends StatefulWidget {
@@ -791,15 +793,25 @@ class _MainScreenState extends State<MainScreen> {
                           if(value == "Sign Out"){
                             FirebaseAuth auth =FirebaseAuth.instance;
                             await firestore.collection("users").doc(auth.currentUser!.email).update({"LoggedIn":false});
+                            SharedPreferences prefs =await SharedPreferences.getInstance();
+                            prefs.remove("email");
                             String providerId = auth.currentUser!.providerData.first.providerId;
                             if(providerId == 'google.com'){
                               GoogleSignIn googleSignIn = GoogleSignIn();
                               await googleSignIn.signOut();
-                              Navigator.of(context).popUntil((route) => route.isFirst);
+                              if(Navigator.canPop(context)) {
+                                Navigator.of(context).popUntil((route) => route.isFirst);
+                              } else {
+                                Navigator.pushNamed(context, WelcomeScreen.id);
+                              }
                             }
                             else{
                               await auth.signOut();
-                              Navigator.of(context).popUntil((route) => route.isFirst);
+                              if(Navigator.canPop(context)) {
+                                Navigator.of(context).popUntil((route) => route.isFirst);
+                              } else {
+                                Navigator.pushNamed(context, WelcomeScreen.id);
+                              }
                             }
                           }
                           if(value == "My account"){

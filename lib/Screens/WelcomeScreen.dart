@@ -13,7 +13,7 @@ import 'package:prototype/Screens/Auth/RegisterGoogle.dart';
 import 'package:prototype/Screens/Auth/registration_screen1.dart';
 import 'package:prototype/Screens/FormScreen.dart';
 import 'package:prototype/Screens/MainScreen.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Components/BackgroundWidget.dart';
 
 import '../Components/WelcomeButton.dart';
@@ -30,6 +30,10 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   late bool showS = false;
+
+  Future<bool> _onWillPop() async {
+    return false; //<-- SEE HERE
+  }
 
   void signInWithGoogle() async{
     FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -56,6 +60,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     if(documentExists) {
       await firestore.collection("users").doc(auth.currentUser!.email).update({"LoggedIn":true});
       dynamic usersinfo =document.get("Additonal Information");
+      SharedPreferences prefs =await SharedPreferences.getInstance();
+      prefs.setString("email", auth.currentUser!.email!);
       if(usersinfo['FilledForm']==true) {
         Navigator.push(context, MaterialPageRoute(builder: (context)=>const MainScreen()));
       } else {
@@ -81,49 +87,52 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
  
   @override
   Widget build(BuildContext context) {
-    return  ModalProgressHUD(
-      inAsyncCall: showS,
-      child: Scaffold(
-        body: SafeArea(
-          child: BackgroundWidget(
-              bgImage: 'assets/FoodDoctor.gif',
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children:   <Widget>[
+    return  WillPopScope(
+      onWillPop: _onWillPop,
+      child: ModalProgressHUD(
+        inAsyncCall: showS,
+        child: Scaffold(
+          body: SafeArea(
+            child: BackgroundWidget(
+                bgImage: 'assets/FoodDoctor.gif',
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children:   <Widget>[
 
-                  WelcomeButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, RegistrationScreenP1.id);
-                      },
-                      msg: 'Register',
-                      icon: Icons.app_registration,
-                      bgcolor: const Color(0xFF40513B),
-                      txtcolor: const Color(0xFFEDF1D6)),
-                  const SizedBox(height: 20.0,),
-                  WelcomeButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, LoginP.id);
-                      },
-                      msg: 'SignIn',
-                      icon :Icons.login,
-                      bgcolor:const Color(0xFF9DC08B),
-                      txtcolor: const Color(0xFFEDF1D6)),
-                  const SizedBox(height: 20.0,),
-                  WelcomeButton(
-                      msg: 'Google Sign In',
-                      icon: FontAwesomeIcons.google,
-                    bgcolor: Colors.white,
-                    txtcolor: Colors.blueAccent,
-                      onPressed: () async {
-                        signInWithGoogle();
-                      }
-                  ),
-                    const SizedBox(
-                      width: 20.0,
+                    WelcomeButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, RegistrationScreenP1.id);
+                        },
+                        msg: 'Register',
+                        icon: Icons.app_registration,
+                        bgcolor: const Color(0xFF40513B),
+                        txtcolor: const Color(0xFFEDF1D6)),
+                    const SizedBox(height: 20.0,),
+                    WelcomeButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, LoginP.id);
+                        },
+                        msg: 'SignIn',
+                        icon :Icons.login,
+                        bgcolor:const Color(0xFF9DC08B),
+                        txtcolor: const Color(0xFFEDF1D6)),
+                    const SizedBox(height: 20.0,),
+                    WelcomeButton(
+                        msg: 'Google Sign In',
+                        icon: FontAwesomeIcons.google,
+                      bgcolor: Colors.white,
+                      txtcolor: Colors.blueAccent,
+                        onPressed: () async {
+                          signInWithGoogle();
+                        }
                     ),
-                ],
-              )
+                      const SizedBox(
+                        width: 20.0,
+                      ),
+                  ],
+                )
+            ),
           ),
         ),
       ),

@@ -8,12 +8,12 @@ import 'package:prototype/constants.dart';
 
 class AccountManageElement extends StatefulWidget {
   const AccountManageElement({
-    super.key, required this.image, required this.email,
+    super.key, required this.image, required this.email, required this.onlineColor,
   });
 
   final ImageProvider image ;
   final String email;
-
+  final Color onlineColor;
   @override
   State<AccountManageElement> createState() => _AccountManageElementState();
 }
@@ -99,7 +99,7 @@ class _AccountManageElementState extends State<AccountManageElement> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(10.0),
       child: Container(
         decoration:  BoxDecoration(
             color: Colors.white,
@@ -138,24 +138,48 @@ class _AccountManageElementState extends State<AccountManageElement> {
         child:   Stack(
           alignment: AlignmentDirectional.topEnd,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 5.0),
-                  child: Center(
-                    child: CircleAvatar(
-                      foregroundImage: widget.image,
-                      backgroundColor: Colors.grey,
-                      radius: 70,
+                  padding: const EdgeInsets.only(top: 10.0,left: 10.0),
+                  child: Material(
+                    color: widget.onlineColor,
+                    elevation: 3,
+                    shape: const CircleBorder(
+                      side: BorderSide(
+                        strokeAlign: BorderSide.strokeAlignCenter
+                      )
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(""),
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Text(widget.email,style: const TextStyle(fontFamily: 'Eastman',color:Colors.black54,fontSize: 24,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                )
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5.0),
+                        child: Center(
+                          child: CircleAvatar(
+                            foregroundImage: widget.image,
+                            backgroundColor: Colors.grey,
+                            radius: 70,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        child: Text(widget.email,style: const TextStyle(fontFamily: 'Eastman',color:Colors.black54,fontSize: 24,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                      )
+                    ],
+                  ),
+                ),
               ],
             ),
             TextButton(
