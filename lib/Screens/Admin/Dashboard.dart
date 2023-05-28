@@ -1,14 +1,15 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, use_build_context_synchronously
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:prototype/Components/DashboardItemRowFlags.dart';
 import 'package:prototype/Components/DashboardItemRowIcon.dart';
 import 'package:prototype/Components/DashboardItemRowImage.dart';
 import 'package:prototype/Components/PieChartAge.dart';
+import 'package:prototype/Screens/Admin/AccountDetailsDashboard.dart';
 import 'package:prototype/constants.dart';
 
 
@@ -181,8 +182,6 @@ class _DashboardState extends State<Dashboard> {
     for(int i=0;i<productsScanNumList.length;i++){
       if(i<5){
         setState(() {
-          print("image URl : ${productsImageUrlList[i].key}");
-          print("Barcode ! ${productsScanNumList[i].key}");
           topProducts.add( DashboardItemRowImage(
             imageUrl: productsImageUrlList[i].key,
             barcode: productsScanNumList[i].key,
@@ -229,6 +228,9 @@ class _DashboardState extends State<Dashboard> {
         ),
         child: InkWell(
           onTap: () async {
+            DocumentSnapshot documentSnapshot =await firestore.collection("users").doc(usersEmailList[0].key).get();
+            Map<String,dynamic> addInfo = documentSnapshot.get("Additonal Information");
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>AccountDetailsDashboard(usersData: addInfo, email: usersEmailList[0].key, image: image)));
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

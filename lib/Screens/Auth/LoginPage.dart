@@ -5,6 +5,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:prototype/Components/BackgroundWidget.dart';
@@ -27,6 +28,8 @@ class LoginP extends StatefulWidget {
 }
 
 class _LoginPState extends State<LoginP> {
+  IconData iconPassword = CupertinoIcons.eye_fill;
+  bool obscurePassword = true;
   final _auth = FirebaseAuth.instance;
   final _firestore =FirebaseFirestore.instance;
   late String email;
@@ -132,7 +135,9 @@ class _LoginPState extends State<LoginP> {
                     width: 200.0,
                     child: TextFormField(
                       keyboardType: TextInputType.emailAddress,
-                      decoration: kInputDecorationOfAuth,
+                      decoration: kInputDecorationOfAuth.copyWith(
+                        prefixIcon: const Icon(Icons.email,color: kCPGreenMid,)
+                      ),
                       onChanged: (value){
                         email = value;
                       },
@@ -148,8 +153,24 @@ class _LoginPState extends State<LoginP> {
                   SizedBox(
                     width: 200.0,
                     child: TextFormField(
-                      obscureText: true,
-                      decoration: kInputDecorationOfAuth,
+                      obscureText: obscurePassword,
+                      decoration: kInputDecorationOfAuth.copyWith(
+                          suffixIcon: InkWell(
+                              child: Icon(iconPassword,color: kCPGreenMid,),
+                            onTap: (){
+                                setState(() {
+                                  if(iconPassword == CupertinoIcons.eye_fill ){
+                                    iconPassword = CupertinoIcons.eye_slash;
+                                    obscurePassword = false;
+                                  }
+                                  else{
+                                    iconPassword = CupertinoIcons.eye_fill;
+                                    obscurePassword = true;
+                                  }
+                                });
+                            },
+                          )
+                      ),
                       onChanged: (value){
                         pwd = value;
                       },

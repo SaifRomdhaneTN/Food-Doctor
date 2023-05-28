@@ -14,9 +14,11 @@ import 'package:prototype/Components/BackgroundWidget.dart';
 import 'package:prototype/Components/Classes/User.dart';
 import 'package:prototype/Components/InfoFormButton.dart';
 import 'package:prototype/Components/RegScreenButton.dart';
-import 'package:prototype/Screens/Admin/AccountsManagement.dart';
+import 'package:prototype/Screens/WelcomeScreen.dart';
+
 import 'package:prototype/constants.dart';
-import 'package:prototype/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 
 class RegistrationScreenP2 extends StatefulWidget {
@@ -48,9 +50,9 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
 
         try{
           u.filledform(false);
-          final UserCredential? newUser =  await MyApp.register(email, pwd);
+          final UserCredential newUser =  await _auth.createUserWithEmailAndPassword(email: email, password: pwd);
           await FirebaseFirestore.instance.collection("users").doc(email).set(UserToJson(u,  newUser));
-          newUser!.user!.sendEmailVerification();
+          newUser.user!.sendEmailVerification();
           setState(() {
             showS=false;
           });
@@ -78,8 +80,8 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
     }
 
 
-  Map<String,dynamic> UserToJson(UserLocal u,UserCredential? newuser)=>{
-    'email':newuser!.user!.email,
+  Map<String,dynamic> UserToJson(UserLocal u,UserCredential newuser)=>{
+    'email':newuser.user!.email,
     'passwordHash':sha256.convert(utf8.encode(pwd)).toString(),
     'Additonal Information':u.toJson(),
     'customScanOn':false,
@@ -262,25 +264,16 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                           if (_formKey.currentState!.validate()) {
                             bool result = await CreateUser(u);
                             if(result) {
-
-                              if(_auth.currentUser == null) {
                                 await CoolAlert.show(
                                     context: context,
                                     type: CoolAlertType.success,
                                     title: "Registration complete",
                                     text: "We have sent a verification mail to the given email address. \n If you didn't find it in the main section please check the junk mail."
                                 );
-                                Navigator.popUntil(context, (route) => route.isFirst);
-                              }
-                              else {
-                                await CoolAlert.show(
-                                    context: context,
-                                    type: CoolAlertType.success,
-                                    title: "User added.",
-                                    text: "The added user can now enter the app in order to fill in the form required for app usage."
-                                );
-                                Navigator.popUntil(context, ModalRoute.withName(AccountsManagement.id));
-                              }
+                                _auth.signOut();
+                                SharedPreferences prefs = await SharedPreferences.getInstance();
+                                prefs.remove('email');
+                                Navigator.popUntil(context, ModalRoute.withName(WelcomeScreen.id));
                             }
                           }
                           else {

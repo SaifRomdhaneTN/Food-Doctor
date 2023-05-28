@@ -4,6 +4,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -35,7 +36,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return false; //<-- SEE HERE
   }
 
-  void signInWithGoogle() async{
+  Future<bool> signInWithGoogle() async{
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     FirebaseAuth auth = FirebaseAuth.instance;
     final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -50,38 +51,51 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           idToken: googleAuth.idToken
       );
       await auth.signInWithCredential(credential);
+
+      DocumentSnapshot document = await firestore.collection("users").doc(auth.currentUser!.email).get();
+      bool documentExists =document.exists;
+
+      if(documentExists) {
+        await firestore.collection("users").doc(auth.currentUser!.email).update({"LoggedIn":true});
+        dynamic usersinfo =document.get("Additonal Information");
+        SharedPreferences prefs =await SharedPreferences.getInstance();
+        prefs.setString("email", auth.currentUser!.email!);
+        if(usersinfo['FilledForm']==true) {
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const MainScreen()));
+          return true;
+        } else {
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const FormScreen()));
+          return true;
+        }
+      }
+      else{
+        if(!accountsDeleted.contains(auth.currentUser!.email)) {
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>const RegisterGoogle()));
+          return true;
+        } else {
+          auth.currentUser!.delete();
+          googleSignIn.signOut();
+          await CoolAlert.show(
+              context: context,
+              type: CoolAlertType.warning,
+              title: "Account Deleted",
+              text: "It seems your account have been deleted by an admin. \n "
+                  "If you need further details please send an email to this address : saif.romtn@gmail.com");
+        }
+        return false;
+      }
     }
     catch(e){
-      CoolAlert.show(context: context, type: CoolAlertType.error,text: e.toString());
-    }
-    DocumentSnapshot document = await firestore.collection("users").doc(auth.currentUser!.email).get();
-    bool documentExists =document.exists;
-
-    if(documentExists) {
-      await firestore.collection("users").doc(auth.currentUser!.email).update({"LoggedIn":true});
-      dynamic usersinfo =document.get("Additonal Information");
-      SharedPreferences prefs =await SharedPreferences.getInstance();
-      prefs.setString("email", auth.currentUser!.email!);
-      if(usersinfo['FilledForm']==true) {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const MainScreen()));
-      } else {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const FormScreen()));
+      if (kDebugMode) {
+        print("Error : ${e.toString()}");
       }
-    }
-    else{
-      if(!accountsDeleted.contains(auth.currentUser!.email)) {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>const RegisterGoogle()));
-      } else {
-        auth.currentUser!.delete();
-        googleSignIn.signOut();
+      if(e.toString()!='Null check operator used on a null value'){
         await CoolAlert.show(
-            context: context,
-            type: CoolAlertType.warning,
-            title: "Account Deleted",
-            text: "It seems your account have been deleted by an admin. \n "
-                "If you need further details please send an email to this address : saif.romtn@gmail.com");
+            context: context, type: CoolAlertType.error, text: e.toString());
       }
+      return false;
     }
+
 
   }
  
@@ -124,7 +138,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       bgcolor: Colors.white,
                       txtcolor: Colors.blueAccent,
                         onPressed: () async {
-                          signInWithGoogle();
+                          setState(() {
+                            showS = true;
+                          });
+                          await signInWithGoogle();
+                          setState(() {
+                            showS = false;
+                          });
                         }
                     ),
                       const SizedBox(

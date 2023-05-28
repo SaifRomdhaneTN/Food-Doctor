@@ -1,5 +1,4 @@
 import 'package:camera/camera.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:prototype/Components/Classes/Preferences.dart';
 import 'package:prototype/Components/Classes/User.dart';
@@ -30,32 +29,25 @@ Future<void> main() async {
   cameras = await availableCameras();
   SharedPreferences prefs =await SharedPreferences.getInstance();
   var email=prefs.getString("email");
-  startingRoute= email==null?WelcomeScreen.id:MainScreen.id;
-  runApp( MyApp());
+  bool notFilledForm=prefs.containsKey("filledForm");
+  if(email == null){
+    startingRoute = WelcomeScreen.id;
+  }
+  else{
+    if(notFilledForm){
+      startingRoute = FormScreen.id;
+    }
+    else{
+      startingRoute = MainScreen.id;
+    }
+  }
+  runApp( const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-   MyApp({super.key});
+   const MyApp({super.key});
 
-   static Future<UserCredential?> register(String email, String password) async {
 
-    UserCredential? userCredential;
-     try {
-       print("/////////////////////called//////////");
-       await Firebase.initializeApp(
-           name: 'Secondary',  options: DefaultFirebaseOptions.currentPlatform,);
-       FirebaseApp app =Firebase.app('Secondary');
-       userCredential = await FirebaseAuth.instanceFor(app: app)
-           .createUserWithEmailAndPassword(email: email, password: password);
-       await app.delete();
-     }
-     on FirebaseAuthException catch (e) {
-       print("///////////////////////////");
-       print(e.toString());
-     }
-
-     return userCredential;
-   }
   @override
   Widget build(BuildContext context) {
     UserLocal placeholderuser = UserLocal("PlaceHolder",DateTime.now(),999,'nowhere','nophonenumber',"");

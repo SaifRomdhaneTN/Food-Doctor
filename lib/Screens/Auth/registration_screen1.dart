@@ -3,7 +3,6 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:prototype/Components/BackgroundWidget.dart';
 import 'package:prototype/Components/Classes/User.dart';
 import 'package:prototype/Components/RegScreenButton.dart';
@@ -146,7 +145,6 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                             countryName=country.name;
                             phoneCode = country.phoneCode;
                             CountryCode =country.countryCode;
-                            print(CountryCode);
                           });
                         },
                       );},
@@ -184,7 +182,7 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                   RegScreenButton(
                     onPressed: (){
                       if(_formKey.currentState!.validate()){
-                        UserLocal user = UserLocal(FullName, selectedDate, Age , countryName, PhoneNumber,CountryCode);
+                        UserLocal user = UserLocal(FullName, selectedDate, Age , countryName,CountryCode ,PhoneNumber);
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>RegistrationScreenP2(tempuser: user)));
                       }
                     },

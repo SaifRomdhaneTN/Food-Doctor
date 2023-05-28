@@ -2,8 +2,9 @@
 
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cool_alert/cool_alert.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:prototype/Components/Classes/Product.dart';
 
@@ -57,17 +58,47 @@ class Processing {
           ingredients.add(finalresult);
         }
         else {
-          List<dynamic> miniIngr = ingr[i]['ingredients'];
-          for (int j = 0; j < miniIngr.length; j++) {
-            String intial_id = miniIngr[j]['id'];
+          if(!ingr[i].toString().contains("en:")){
+            List<dynamic> miniIngr = ingr[i]['ingredients'];
+            for (int j = 0; j < miniIngr.length; j++) {
+              String intial_id = miniIngr[j]['id'];
+              String afterDel;
+              if (intial_id.substring(0, 3) == "fr:") {
+                intial_id = miniIngr[j]['text'];
+                if (intial_id.toLowerCase().contains("lait")) {
+                  afterDel = "Milk";
+                } else {
+                  var translation = await translator.translate(
+                      intial_id, to: 'en');
+                  afterDel = translation.text;
+                }
+              }
+              else {
+                afterDel = intial_id.substring(3);
+              }
+              String finalresult = afterDel;
+              if (afterDel[0] == 'e' && numbers.contains(afterDel[1])) {
+                finalresult = afterDel[0];
+                for (int i = 1; i < afterDel.length; i++) {
+                  if (afterDel[i] != 'i') finalresult += afterDel[i];
+                }
+                if (foodAdditives.containsKey(finalresult)) {
+                  String key = finalresult;
+                  finalresult = foodAdditives[key]!;
+                }
+              }
+              ingredients.add(finalresult);
+            }
+          }
+          else{
+            String intial_id = ingr[i]['id'];
             String afterDel;
             if (intial_id.substring(0, 3) == "fr:") {
-              intial_id = miniIngr[j]['text'];
+              intial_id = ingr[i]['text'];
               if (intial_id.toLowerCase().contains("lait")) {
                 afterDel = "Milk";
               } else {
-                var translation = await translator.translate(
-                    intial_id, to: 'en');
+                var translation = await translator.translate(intial_id, to: 'en');
                 afterDel = translation.text;
               }
             }
@@ -126,7 +157,7 @@ class Processing {
       return false;
     }
   }
-  Future<Map<String, dynamic>> UserPrefrencesToMap() async {
+  Future<Map<String, dynamic>> UserPreferencesToMap() async {
     DocumentSnapshot snapshot = await _firestore.collection("users").doc(
         _auth.currentUser!.email).get();
     Map<String, dynamic> data = snapshot.get('Preferences');
@@ -252,7 +283,7 @@ class Processing {
     if (IngreidientsFound == true) {
       bool EdamamWorked = await foodapi();
       if (EdamamWorked == true) {
-        Map<String, dynamic> userPrefrences = await UserPrefrencesToMap();
+        Map<String, dynamic> userPrefrences = await UserPreferencesToMap();
         Map<String, dynamic> productDetails = ProductIntoMap();
         bool condition = ComparePref(userPrefrences, productDetails);
         if (condition) {
@@ -347,11 +378,9 @@ class Processing {
       try{
         DocumentSnapshot documentSnapshot = await _firestore.collection("Products").doc(p.getBarCode()).get();
         int numOfScans = documentSnapshot.get("numberOfScans");
-        print("current product numOfScans : $numOfScans");
         mapOfProduct.addAll({
           "numberOfScans":numOfScans+1
         });
-        print("current product : $mapOfProduct");
         await _firestore
             .collection("Products")
             .doc(p.getBarCode())
@@ -377,7 +406,9 @@ class Processing {
       return true;
     }
     catch(e){
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
       return false;
     }
   }

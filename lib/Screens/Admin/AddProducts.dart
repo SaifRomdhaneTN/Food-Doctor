@@ -111,7 +111,6 @@ class _AddProductsState extends State<AddProducts> {
                           Map<String,dynamic> data =await  getOpenFoodFactsData();
                           Processing processing = Processing(data);
                           Product product = await processing.checkIfCanEat(barcode);
-                          print(product.getdetails());
                           if(product.getdetails()["Error"] != null){
                             await CoolAlert.show(
                                 context: context,

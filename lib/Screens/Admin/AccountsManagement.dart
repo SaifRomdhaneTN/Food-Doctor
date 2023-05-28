@@ -1,11 +1,11 @@
+// ignore_for_file: file_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:prototype/Components/AccountManageElement.dart';
-import 'package:prototype/Components/CircularButton.dart';
 import 'package:prototype/Components/RegScreenButton.dart';
 import 'package:prototype/Screens/Admin/DeletedAccountsPage.dart';
-import 'package:prototype/Screens/Auth/registration_screen1.dart';
 import 'package:prototype/constants.dart';
 
 class AccountsManagement extends StatefulWidget {
@@ -46,30 +46,16 @@ class _AccountsManagementState extends State<AccountsManagement> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: RegScreenButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const DeletedAccountsPage()));
-                      },
-                      msg: 'Deleted Accounts',
-                      txtColor: kCPWhite,
-                      bgColor: kCPGreenMid,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: CircularButton(
-                        icon: Icons.add,
-                        bgcolor: Colors.green,
-                        iconColor: Colors.white,
-                        onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const RegistrationScreenP1()));
-                        }),
-                  ),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: RegScreenButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const DeletedAccountsPage()));
+                  },
+                  msg: 'Deleted Accounts',
+                  txtColor: kCPWhite,
+                  bgColor: kCPGreenMid,
+                ),
               ),
             ),
             const SizedBox(

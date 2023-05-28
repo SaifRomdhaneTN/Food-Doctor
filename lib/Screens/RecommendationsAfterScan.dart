@@ -78,7 +78,7 @@ class _RecommendationsAfterScanState extends State<RecommendationsAfterScan> {
         if(productMatchCategories[j]==productCategories[k]) counter++;
       }
     }
-    if(counter>=2 && productsThatMatch[i]['Barcode']!= product.getBarCode()) updatedList.add(productsThatMatch[i]);
+    if(counter>3 && productsThatMatch[i]['Barcode']!= product.getBarCode()) updatedList.add(productsThatMatch[i]);
     }
     updatedList.shuffle();
     for(int i=0;i<updatedList.length;i++){

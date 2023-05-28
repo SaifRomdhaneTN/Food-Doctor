@@ -76,7 +76,9 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                 SizedBox(
                     width: 200.0,
                     child: TextFormField(
-                      decoration: kInputDecorationOfAuth,
+                      decoration: kInputDecorationOfAuth.copyWith(
+                          prefixIcon: const Icon(Icons.account_circle,color: kCPGreenMid,)
+                      ),
                       onChanged: (value){
                         fullName=value;
                       },
@@ -99,7 +101,8 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                   child: TextFormField(
                     decoration: kInputDecorationOfAuth.copyWith(
                         hintText: "${selectedDate.toLocal()}".split(' ')[0],
-                        hintStyle: const TextStyle(color: Colors.black)
+                        hintStyle: const TextStyle(color: Colors.black),
+                        prefixIcon: const Icon(Icons.calendar_month,color: kCPGreenMid,)
                     ),
                     readOnly: true,
                     onTap: () => setState(() async {
@@ -119,7 +122,7 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                 SizedBox(
                   width: 200.0,
                   child: TextFormField(
-                    decoration: kInputDecorationOfAuth.copyWith(hintText: countryName),
+                    decoration: kInputDecorationOfAuth.copyWith(prefixIcon: const Icon(Icons.room,color: kCPGreenMid,),hintText: countryName),
                     readOnly: true,
                     onTap: (){showCountryPicker(
                       context: context,
@@ -145,7 +148,10 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                   width: 200.0,
                   child: TextFormField(
                     keyboardType: TextInputType.phone,
-                    decoration: kInputDecorationOfAuth.copyWith(prefixText: "+ $phoneCode ",prefixStyle: const TextStyle(color: Colors.black)),
+                    decoration: kInputDecorationOfAuth.copyWith(
+                        prefixText: "+ $phoneCode ",
+                        prefixStyle: const TextStyle(color: Colors.black,),
+                        prefixIcon: const Icon(Icons.phone,color: kCPGreenMid,)),
                     onChanged: (value) async {
                       phoneNumber = await plugin.PhoneNumberUtil().format(value, phoneCode);
                       pnvaildation = await plugin.PhoneNumberUtil().validate(phoneNumber,regionCode: phoneCode);

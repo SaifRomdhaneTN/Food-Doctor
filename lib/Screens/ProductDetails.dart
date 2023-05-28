@@ -56,59 +56,62 @@ class _ProductDetailsState extends State<ProductDetails> {
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(Result.getimageURL()),
-                      backgroundColor: Colors.white,
-                      radius: 70,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(Result.getimageURL()),
+                        backgroundColor: Colors.white,
+                        radius: 70,
+                      ),
                     ),
-                  ),
-                  Padding(padding: const EdgeInsets.symmetric(vertical: 5),child: Text(" ${Result.getname()} Par ${Result.getmaker()}",style: kResultPNameTextStyle,textAlign: TextAlign.center,)),
-                  const SizedBox(
-                    width: 50,
-                    child: Divider(
-                      color: Colors.black,
-                      thickness: 1.5,
+                    Padding(padding: const EdgeInsets.symmetric(vertical: 5),child: Text(" ${Result.getname()} Par ${Result.getmaker()}",style: kResultPNameTextStyle,textAlign: TextAlign.center,)),
+                    const SizedBox(
+                      width: 50,
+                      child: Divider(
+                        color: Colors.black,
+                        thickness: 1.5,
+                      ),
                     ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text("List of Ingreidients :",style: TextStyle(fontFamily: 'Eastman',fontSize: 24,fontWeight: FontWeight.bold),),
-                  ),
-                  Wrap(
-                    alignment: WrapAlignment.spaceEvenly,
-                    children: ingr,
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const SizedBox(
-                    width: 50,
-                    child: Divider(
-                      color: Colors.black,
-                      thickness: 1.5,
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                      child: Text("List of Ingreidients :",style: TextStyle(fontFamily: 'Eastman',fontSize: 24,fontWeight: FontWeight.bold),),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 20),
-                    child: Wrap(
+                    Wrap(
                       alignment: WrapAlignment.spaceEvenly,
-                      children: badges,
+                      children: ingr,
                     ),
-                  ),
-                  const SizedBox(
-                    width: 50,
-                    child: Divider(
-                      color: Colors.black,
-                      thickness: 1.5,
+                    const SizedBox(
+                      height: 20,
                     ),
-                  ),
+                    const SizedBox(
+                      width: 50,
+                      child: Divider(
+                        color: Colors.black,
+                        thickness: 1.5,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 20),
+                      child: Wrap(
+                        alignment: WrapAlignment.spaceEvenly,
+                        children: badges,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 50,
+                      child: Divider(
+                        color: Colors.black,
+                        thickness: 1.5,
+                      ),
+                    ),
 
-                ],
+                  ],
+                ),
               ),
             ),
           ),

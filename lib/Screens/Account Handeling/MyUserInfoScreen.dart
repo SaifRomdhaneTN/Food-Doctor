@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:prototype/Components/BackgroundWidget.dart';
 import 'package:prototype/Components/DisplayButtonPref.dart';
 import 'package:prototype/Components/DisplayButtonPrefV2.dart';
-import 'package:prototype/Screens/Auth/ChangePersenalInfo.dart';
+import 'package:prototype/Screens/Account%20Handeling/ChangePersenalInfo.dart';
 import 'package:prototype/constants.dart';
 
 class MyUserInfoScreen extends StatefulWidget {

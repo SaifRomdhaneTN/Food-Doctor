@@ -1,14 +1,14 @@
-// ignore_for_file: non_constant_identifier_names, no_logic_in_create_state, file_names
+// ignore_for_file: non_constant_identifier_names, no_logic_in_create_state, file_names, use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:prototype/Components/BackgroundWidget.dart';
 import 'package:prototype/Components/Classes/Preferences.dart';
 import 'package:prototype/Components/RegScreenButton.dart';
 import 'package:prototype/Screens/MainScreen.dart';
 import 'package:prototype/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 enum DiabeticPref {diabetic,notdiebatic}
 enum CholesterolPref {hascholesterol,donothavecholesterol}
 class FormPage2 extends StatefulWidget {
@@ -62,12 +62,14 @@ class _FormPage2State extends State<FormPage2> {
     Map<String, dynamic>? data = d.data();
     data!["Additonal Information"]["FilledForm"] = true;
     Map<String,dynamic> addInfo = data["Additonal Information"];
-     documentRef.update(updateUser(p,addInfo)).then((value) {
-       CoolAlert.show(
+     documentRef.update(updateUser(p,addInfo)).then((value) async {
+       await CoolAlert.show(
            context: context,
            type: CoolAlertType.success,
            title: "Form Finished!",
            text: "You have Completed the mandatory Form. You are now capable of Using the application.");
+       SharedPreferences sharedPreferences =await SharedPreferences.getInstance();
+       sharedPreferences.remove("filledForm");
        Navigator.pushNamed(context, MainScreen.id);
      },
       onError: (e)=> CoolAlert.show(
@@ -79,148 +81,157 @@ class _FormPage2State extends State<FormPage2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BackgroundWidget(
-          bgImage: 'assets/backgroundwhite.gif',
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children:  [
-                 const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.0),
-                  child: DefaultTextStyle(
-                    style: kFormTextStyle,
-                    child: Text("Is there any Ingreidients that you are not comfortable Eating ?\n (Optional)",
-                      textAlign: TextAlign.center,),
-                  ),
-                ),
-                 SizedBox(
-                   width: 300.0,
-                   child: TextFormField(
-                     decoration: kInputDecorationOfAuth.copyWith(hintText: "Separate the ingredients with , "),
-                     validator: (value){
-                       if(value == null) {
-                         extra_allergies="none";
-                         return null;
-                       }
-                       return null;
-                     },
-                     onChanged: (value){
-                       extra_allergies = value;
-                     },
-                   ),
-                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20.0),
-                  child: DefaultTextStyle(
-                    style: kFormTextStyle,
-                    child: Text('Do you Suffer from Diabetes?',
-                      textAlign: TextAlign.center,),
-                  ),
-                ),
-                SizedBox(
-                  height: 60,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ListTile(
-                              title: const Text("Yes"),
-                              leading: Radio<DiabeticPref>(
-                                value: DiabeticPref.diabetic,
-                                groupValue: _diabeticPref,
-                                onChanged: (value){
-                                  setState(() {
-                                    _diabeticPref=value;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListTile(
-                              autofocus: true,
-                              title: const Text("No"),
-                              leading: Radio<DiabeticPref>(
-                                value: DiabeticPref.notdiebatic,
-                                groupValue: _diabeticPref,
-                                onChanged: (value){
-                                  setState(() {
-                                    _diabeticPref=value;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.0),
-                  child: DefaultTextStyle(
-                    style: kFormTextStyle,
-                    child: Text('Do you Suffer From Cholesterol?',
-                      textAlign: TextAlign.center,),
-                  ),
-                ),
-                SizedBox(
-                  height: 80,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ListTile(
-                              title: const Text("Yes"),
-                              leading: Radio<CholesterolPref>(
-                                value: CholesterolPref.hascholesterol,
-                                groupValue: _cholesterolPref,
-                                onChanged: (value){
-                                  setState(() {
-                                    _cholesterolPref=value;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListTile(
-                              autofocus: true,
-                              title: const Text("No"),
-                              leading: Radio<CholesterolPref>(
-                                value: CholesterolPref.donothavecholesterol,
-                                groupValue: _cholesterolPref,
-                                onChanged: (value){
-                                  setState(() {
-                                    _cholesterolPref=value;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                RegScreenButton(
-                    onPressed: (){
-                        p.ingredientsCantEat = fromStringtoList(extra_allergies);
-                        p.hasDiabetes =fromDiabeticPrefToString(_diabeticPref!);
-                        p.hasCholesterol = fromCholesterolPrefToString(_cholesterolPref!);
-                        getDocument(p);
-                    },
-                    msg: "Finish",
-                    txtColor: const Color(0xFF609966),
-                    bgColor: Colors.white)
-              ],
+      backgroundColor: kCPWhite,
+      body: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children:  [
+             const Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+              child: DefaultTextStyle(
+                style: kFormTextStyle,
+                child: Text("Is there any Ingreidients that you are not comfortable Eating ?\n (Optional)",
+                  textAlign: TextAlign.center,),
+              ),
             ),
-          )),
+             SizedBox(
+               width: 300.0,
+               child: TextFormField(
+                 decoration: kInputDecorationOfAuth.copyWith(hintText: " , "),
+                 validator: (value){
+                   if(value == null) {
+                     extra_allergies="none";
+                     return null;
+                   }
+                   return null;
+                 },
+                 onChanged: (value){
+                   extra_allergies = value;
+                 },
+               ),
+             ),
+            const Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Separate the ingredients with',style: TextStyle(color: Colors.black,fontFamily: 'Eastman',fontSize: 18),),
+                  Text(' , ',style: TextStyle(color: kCPGreenMid,fontFamily: 'Eastman',fontSize: 48,fontWeight: FontWeight.bold),),
+                ],
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20.0),
+              child: DefaultTextStyle(
+                style: kFormTextStyle,
+                child: Text('Do you Suffer from Diabetes?',
+                  textAlign: TextAlign.center,),
+              ),
+            ),
+            SizedBox(
+              height: 60,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                          title: const Text("Yes"),
+                          leading: Radio<DiabeticPref>(
+                            value: DiabeticPref.diabetic,
+                            groupValue: _diabeticPref,
+                            onChanged: (value){
+                              setState(() {
+                                _diabeticPref=value;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListTile(
+                          autofocus: true,
+                          title: const Text("No"),
+                          leading: Radio<DiabeticPref>(
+                            value: DiabeticPref.notdiebatic,
+                            groupValue: _diabeticPref,
+                            onChanged: (value){
+                              setState(() {
+                                _diabeticPref=value;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+              child: DefaultTextStyle(
+                style: kFormTextStyle,
+                child: Text('Do you Suffer From Cholesterol?',
+                  textAlign: TextAlign.center,),
+              ),
+            ),
+            SizedBox(
+              height: 80,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                          title: const Text("Yes"),
+                          leading: Radio<CholesterolPref>(
+                            value: CholesterolPref.hascholesterol,
+                            groupValue: _cholesterolPref,
+                            onChanged: (value){
+                              setState(() {
+                                _cholesterolPref=value;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListTile(
+                          autofocus: true,
+                          title: const Text("No"),
+                          leading: Radio<CholesterolPref>(
+                            value: CholesterolPref.donothavecholesterol,
+                            groupValue: _cholesterolPref,
+                            onChanged: (value){
+                              setState(() {
+                                _cholesterolPref=value;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            RegScreenButton(
+                onPressed: (){
+                    p.ingredientsCantEat = fromStringtoList(extra_allergies);
+                    p.hasDiabetes =fromDiabeticPrefToString(_diabeticPref!);
+                    p.hasCholesterol = fromCholesterolPrefToString(_cholesterolPref!);
+                    getDocument(p);
+                },
+                msg: "Finish",
+                txtColor: const Color(0xFF609966),
+                bgColor: Colors.white)
+          ],
+        ),
+      ),
     );
   }
 

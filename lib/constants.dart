@@ -189,6 +189,12 @@ const kFiltersOptionTextStyle = TextStyle(
     fontSize: 16,
     fontFamily: 'EastMan'
 );
+const kFiltersButtonTextStyle = TextStyle(
+    fontSize: 18,
+    color: Colors.white,
+    fontWeight: FontWeight.bold,
+    fontFamily: 'EastMan'
+);
 
 const kSearchParametersNames = TextStyle(
     fontSize: 20,
