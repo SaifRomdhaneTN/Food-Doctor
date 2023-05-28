@@ -3,17 +3,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:prototype/Screens/Admin/AccountDetails.dart';
 import 'package:prototype/constants.dart';
 
 class AccountManageElement extends StatefulWidget {
-  const AccountManageElement({
-    super.key, required this.image, required this.email, required this.onlineColor,
+   const AccountManageElement({
+    super.key,  required this.usersData, required this.onlineColor, required this.imageURL,
   });
 
-  final ImageProvider image ;
-  final String email;
+
+  final Map<String,dynamic> usersData;
   final Color onlineColor;
+  final String imageURL;
   @override
   State<AccountManageElement> createState() => _AccountManageElementState();
 }
@@ -22,7 +25,7 @@ class _AccountManageElementState extends State<AccountManageElement> {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-
+  late ImageProvider image = const AssetImage("assets/person.png");
   Future<bool> showDeleteDialog() async {
     bool condition = false;
     await showDialog<void>(
@@ -36,7 +39,7 @@ class _AccountManageElementState extends State<AccountManageElement> {
               ),
               children: [
                 Text(
-                  widget.email,
+                  widget.usersData['email'],
                   style: const TextStyle(fontFamily: 'Eastman',
                       fontSize: 18),
                   textAlign: TextAlign.center,
@@ -67,10 +70,11 @@ class _AccountManageElementState extends State<AccountManageElement> {
         });
     return condition;
   }
+
   
 
   Future<void> deleteAccount()async{
-    DocumentSnapshot documentSnapshot = await firestore.collection("users").doc(widget.email).get();
+    DocumentSnapshot documentSnapshot = await firestore.collection("users").doc(widget.usersData['email']).get();
     bool isLoggedIn = documentSnapshot.get("LoggedIn");
     if(isLoggedIn) {
       await CoolAlert.show(
@@ -82,18 +86,29 @@ class _AccountManageElementState extends State<AccountManageElement> {
     else{
       DocumentSnapshot documentSnapshotAdminAccountsDel = await firestore.collection("admin").doc("DeletedAccounts").get();
       List<dynamic> accountsDeleted = documentSnapshotAdminAccountsDel.get("emails");
-      if(!accountsDeleted.contains(widget.email)) accountsDeleted.add(widget.email);
+      if(!accountsDeleted.contains(widget.usersData['email'])) accountsDeleted.add(widget.usersData['email']);
       try{
-        await firestore.collection("users").doc(widget.email).delete();
-        await firestore.collection("UserScans").doc(widget.email).delete();
+        await firestore.collection("users").doc(widget.usersData['email']).delete();
+        await firestore.collection("UserScans").doc(widget.usersData['email']).delete();
         await firestore.collection("admin").doc("DeletedAccounts").set({
           "emails":accountsDeleted
         });
       }
       catch(e){
-        print(e.toString());
+        if (kDebugMode) {
+          print(e.toString());
+        }
       }
     }
+  }
+
+
+
+  @override
+  void initState() {
+
+    if(widget.usersData.containsKey("imageUrl")) image = NetworkImage(widget.usersData['imageUrl']);
+    super.initState();
   }
 
   @override
@@ -159,28 +174,37 @@ class _AccountManageElementState extends State<AccountManageElement> {
                   ),
                 ),
                 Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5.0),
-                        child: Center(
-                          child: CircleAvatar(
-                            foregroundImage: widget.image,
-                            backgroundColor: Colors.grey,
-                            radius: 70,
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>AccountDetails(usersData: widget.usersData)));
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5.0),
+                          child: Center(
+                            child: CircleAvatar(
+                              foregroundImage: image,
+                              backgroundColor: Colors.grey,
+                              radius: 70,
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0),
-                        child: Text(widget.email,style: const TextStyle(fontFamily: 'Eastman',color:Colors.black54,fontSize: 24,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                      )
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10.0),
+                          child: Text(widget.usersData['email'],style: const TextStyle(fontFamily: 'Eastman',color:Colors.black54,fontSize: 24,fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 50.0),
+              child: Image(image: AssetImage(widget.imageURL),height: 65,width: 65,),
             ),
             TextButton(
                 style: kWelcomeScreenCircularButtonStyle.copyWith(backgroundColor: MaterialStateColor.resolveWith((states) =>Colors.red)),

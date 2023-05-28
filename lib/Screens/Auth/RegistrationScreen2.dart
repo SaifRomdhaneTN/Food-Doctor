@@ -7,13 +7,16 @@ import 'package:crypto/crypto.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:prototype/Components/BackgroundWidget.dart';
 import 'package:prototype/Components/Classes/User.dart';
 import 'package:prototype/Components/InfoFormButton.dart';
 import 'package:prototype/Components/RegScreenButton.dart';
+import 'package:prototype/Screens/Admin/AccountsManagement.dart';
 import 'package:prototype/constants.dart';
+import 'package:prototype/main.dart';
 
 
 class RegistrationScreenP2 extends StatefulWidget {
@@ -33,20 +36,24 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
   late String pwd="";
   late String cpwd;
   bool showS = false;
+  IconData iconPassword = CupertinoIcons.eye_fill;
+  IconData iconPasswordConfirm = CupertinoIcons.eye_fill;
+  bool obscurePassword = true;
+  bool obscureConfirmPassword = true;
 
   _RegistrationScreenP2State(this.user);
+
 
   Future<bool> CreateUser(UserLocal u) async {
 
         try{
           u.filledform(false);
-          final UserCredential newUser = await _auth.createUserWithEmailAndPassword(email: email, password: pwd);
+          final UserCredential? newUser =  await MyApp.register(email, pwd);
           await FirebaseFirestore.instance.collection("users").doc(email).set(UserToJson(u,  newUser));
-          newUser.user!.sendEmailVerification();
+          newUser!.user!.sendEmailVerification();
           setState(() {
             showS=false;
           });
-          await CoolAlert.show(context: context, type: CoolAlertType.success,title: "Registration complete",text: "Please verify your email. check you junk mail as it would most likely the mail will be sent there.");
           return true;
         }
         catch(e){
@@ -71,8 +78,8 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
     }
 
 
-  Map<String,dynamic> UserToJson(UserLocal u,UserCredential newuser)=>{
-    'email':newuser.user!.email,
+  Map<String,dynamic> UserToJson(UserLocal u,UserCredential? newuser)=>{
+    'email':newuser!.user!.email,
     'passwordHash':sha256.convert(utf8.encode(pwd)).toString(),
     'Additonal Information':u.toJson(),
     'customScanOn':false,
@@ -83,7 +90,7 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
 
   bool validatePassword(String value) {
     RegExp regex =
-    RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#&_*~]).{8,}$');
+    RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#&_*~]).{6,}$');
     if (value.isEmpty) {
       return false;
     } else {
@@ -115,86 +122,138 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(
-                      height: 80.0,
-                    ),
-                    const Text("Registre",
-                        textAlign: TextAlign.center,
-                        style: kTitleTextStyle
-                    ),
-                    const SizedBox(
-                      height: 50.0,
-                    ),
-                    Text("Email",style: kTextRegStyle,),
-                    const SizedBox(height:10.0),
-                    SizedBox(
-                      width: 200.0,
-                      child: TextFormField(
-                        validator: (value){
-                          if(value == null || !EmailValidator.validate(value)) return "email Not Valid";
-                          return null;
-                        },
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: kInputDecorationOfAuth,
-                        onChanged: (value){
-                          email = value;
-                        },
+
+                    const Padding(
+                      padding: EdgeInsets.only(top: 80.0,bottom: 50.0),
+                      child: Text("Registre",
+                          textAlign: TextAlign.center,
+                          style: kTitleTextStyle
                       ),
                     ),
-                    const SizedBox(height: 20.0,),
+
+                    Text("Email",style: kTextRegStyle,),
+
+                    Padding(
+                      padding: const EdgeInsets.only(top:10.0,bottom: 20.0),
+                      child: SizedBox(
+                        width: 200.0,
+                        child: TextFormField(
+                          validator: (value){
+                            if(value == null || !EmailValidator.validate(value)) return "email Not Valid";
+                            return null;
+                          },
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: kInputDecorationOfAuth.copyWith(prefixIcon: const Icon(Icons.email,color: kCPGreenMid,)),
+                          onChanged: (value){
+                            email = value;
+                          },
+                        ),
+                      ),
+                    ),
+
                     Text("Password",style: kTextRegStyle,),
-                    const SizedBox(height:10.0),
+
                     SizedBox(
-                      width: 200.0,
-                      child: Row(
+                      width: 350,
+                      child: Stack(
+                        alignment: AlignmentDirectional.topEnd,
                         children: [
-                          Flexible(
-                            child: TextFormField(
-                              validator: (value){
-                                if(value == null) return "Empty field";
-                                if(!validatePassword(value)) return "Not Valid";
-                                return null;
-                              },
-                              obscureText: true,
-                              decoration: kInputDecorationOfAuth,
-                              onChanged: (value){
-                                  pwd=value;
-                              },
+                          Padding(
+                            padding: const EdgeInsets.only(right: 50.0),
+                            child: Column(
+                              children: [
+
+                                Padding(
+                                  padding: const EdgeInsets.only(top:10.0,bottom: 20.0),
+                                  child: SizedBox(
+                                    width: 200.0,
+                                    child: TextFormField(
+                                      validator: (value){
+                                        if(value == null) return "Empty field";
+                                        if(!validatePassword(value)) return "Not Valid";
+                                        return null;
+                                      },
+                                      obscureText: obscurePassword,
+                                      decoration: kInputDecorationOfAuth.copyWith(
+                                        suffixIcon: InkWell(
+                                          onTap: (){
+                                            setState(() {
+                                              if(iconPassword == CupertinoIcons.eye_fill ){
+                                                iconPassword = CupertinoIcons.eye_slash;
+                                                obscurePassword = false;
+                                              }
+                                              else{
+                                                iconPassword = CupertinoIcons.eye_fill;
+                                                obscurePassword = true;
+                                              }
+                                            });
+                                          },
+                                          child: Icon(iconPassword,color: kCPGreenMid,),
+                                        )
+                                      ),
+                                      onChanged: (value){
+                                        pwd=value;
+                                      },
+                                    ),
+                                  ),
+                                ),
+
+                                Text("Confirm Password",style: kTextRegStyle,),
+
+                                Padding(
+                                  padding: const EdgeInsets.only(top:10.0,bottom: 20.0),
+                                  child: SizedBox(
+                                    width: 200.0,
+                                    child: TextFormField(
+                                      validator: (value){
+                                        if(value == null )return "Empty field";
+                                        if(value!= pwd) return "It does not match";
+                                        return null;
+                                      },
+                                      obscureText: obscureConfirmPassword,
+                                      decoration: kInputDecorationOfAuth.copyWith(
+                                          suffixIcon: InkWell(
+                                            onTap: (){
+                                              setState(() {
+                                                if(iconPasswordConfirm == CupertinoIcons.eye_fill ){
+                                                  iconPasswordConfirm = CupertinoIcons.eye_slash;
+                                                  obscureConfirmPassword = false;
+                                                }
+                                                else{
+                                                  iconPasswordConfirm = CupertinoIcons.eye_fill;
+                                                  obscureConfirmPassword = true;
+                                                }
+                                              });
+                                            },
+                                            child: Icon(iconPasswordConfirm,color: kCPGreenMid,),
+                                          )
+                                      ),
+                                      onChanged: (value){
+                                        cpwd=value;
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          InfoFormButton(
-                            onPressed: (){
-                              CoolAlert.show(
-                                  context: context,
-                                  type: CoolAlertType.info,
-                                  title: "Password Specifications :",
-                                  text: " The password must Contain at least:  \n - 1 Number \n - 1 Letter (Upper and Lower Case) \n - And 1  special character among these: \n !@#&_*~");
-                            },
-                            child: const Text("!",style: kInfoButtonTextStyleReg2),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: InfoFormButton(
+                              onPressed: (){
+                                CoolAlert.show(
+                                context: context,
+                                type: CoolAlertType.info,
+                                title: "Password Specifications :",
+                                text: " The password must Contain at least:  \n - 1 Number \n - 1 Letter (Upper and Lower Case) \n -1  special character among these: \n !@#&_*~ \n - And should be at lease 6 characters Long");
+                              },
+                              child: const Text("!",style: kInfoButtonTextStyleReg2),
+                            ),
                           ),
                         ],
                       ),
                     ),
 
-                    const SizedBox(height: 20.0,),
-                    Text("Confirm Password",style: kTextRegStyle,),
-                    const SizedBox(height:10.0),
-                    SizedBox(
-                      width: 200.0,
-                      child: TextFormField(
-                        validator: (value){
-                          if(value == null )return "Empty field";
-                          if(value!= pwd) return "It does not match";
-                          return null;
-                        },
-                        obscureText: true,
-                        decoration: kInputDecorationOfAuth,
-                        onChanged: (value){
-                          cpwd=value;
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 20.0,),
                     RegScreenButton(
                         onPressed: ()  async {
                           setState(() {
@@ -202,7 +261,27 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                           });
                           if (_formKey.currentState!.validate()) {
                             bool result = await CreateUser(u);
-                            if(result) Navigator.popUntil(context, (route) => route.isFirst);
+                            if(result) {
+
+                              if(_auth.currentUser == null) {
+                                await CoolAlert.show(
+                                    context: context,
+                                    type: CoolAlertType.success,
+                                    title: "Registration complete",
+                                    text: "We have sent a verification mail to the given email address. \n If you didn't find it in the main section please check the junk mail."
+                                );
+                                Navigator.popUntil(context, (route) => route.isFirst);
+                              }
+                              else {
+                                await CoolAlert.show(
+                                    context: context,
+                                    type: CoolAlertType.success,
+                                    title: "User added.",
+                                    text: "The added user can now enter the app in order to fill in the form required for app usage."
+                                );
+                                Navigator.popUntil(context, ModalRoute.withName(AccountsManagement.id));
+                              }
+                            }
                           }
                           else {
                             setState(() {

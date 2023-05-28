@@ -5,10 +5,14 @@ import 'package:prototype/Components/AccountManageElement.dart';
 import 'package:prototype/Components/CircularButton.dart';
 import 'package:prototype/Components/RegScreenButton.dart';
 import 'package:prototype/Screens/Admin/DeletedAccountsPage.dart';
+import 'package:prototype/Screens/Auth/registration_screen1.dart';
 import 'package:prototype/constants.dart';
 
 class AccountsManagement extends StatefulWidget {
-  const AccountsManagement({Key? key}) : super(key: key);
+  const AccountsManagement({Key? key, required this.adminsList}) : super(key: key);
+  final List<dynamic> adminsList;
+
+  static String id = 'AccountsManagement';
 
   @override
   State<AccountsManagement> createState() => _AccountsManagementState();
@@ -17,6 +21,14 @@ class AccountsManagement extends StatefulWidget {
 class _AccountsManagementState extends State<AccountsManagement> {
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  bool checkIfAdmin(String email){
+    bool condition = false;
+    if(widget.adminsList.contains(email)) {
+      condition = true;
+    }
+    return condition;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +66,7 @@ class _AccountsManagementState extends State<AccountsManagement> {
                         bgcolor: Colors.green,
                         iconColor: Colors.white,
                         onPressed: (){
-
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const RegistrationScreenP1()));
                         }),
                   ),
                 ],
@@ -69,7 +81,7 @@ class _AccountsManagementState extends State<AccountsManagement> {
             ),
             StreamBuilder(
               stream: firestore.collection("users").snapshots(),
-              builder: (BuildContext context,AsyncSnapshot<QuerySnapshot<Map<String,dynamic>>> snapshot){
+              builder: (BuildContext context,AsyncSnapshot<QuerySnapshot<Map<String,dynamic>>> snapshot) {
                 if(!snapshot.hasData){
                   return const Center(
                     child: CircularProgressIndicator(),
@@ -87,17 +99,17 @@ class _AccountsManagementState extends State<AccountsManagement> {
                   return i;
                 });
                 for(int i =0;i<users.length;i++){
-                  ImageProvider image = const AssetImage('assets/person.png'); ;
-                  if(users[i]['imageUrl']!=null) {
-                    image = NetworkImage(users[i]['imageUrl']);
-                  }
                   Color onlineColor = Colors.red;
+                  String imageURL = 'assets/user.png';
                   if(users[i]['LoggedIn']==true) onlineColor = Colors.green;
+                  if( checkIfAdmin(users[i]['email'])) imageURL = 'assets/admin.png';
                   if(users[i]['email'] != FirebaseAuth.instance.currentUser!.email) {
-                    elements.add(AccountManageElement(
-                    image: image,
-                    email: users[i]['email'],
-                    onlineColor: onlineColor,));
+                    elements.add(
+                        AccountManageElement(
+                          usersData: users[i],
+                      onlineColor: onlineColor,
+                        imageURL: imageURL,)
+                    );
                   }
                 }
                 return Column(

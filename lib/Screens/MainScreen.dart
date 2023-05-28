@@ -683,20 +683,42 @@ class _MainScreenState extends State<MainScreen> {
   }
   void checkAdmin() async {
     DocumentSnapshot documentSnapshot =await  firestore.collection("admin").doc("Information").get();
-    String adminEmail = documentSnapshot.get("email");
-    if(auth.currentUser!.email == adminEmail){
-      setState(() {
-        popItems = [
-          const PopupMenuItem(value:"My account", child: Text("My Account"),),
-          const PopupMenuItem(value:"ScanHistory",child: Text("Scan History"),),
-          const PopupMenuItem(value:"Recommendations",child: Text("Recommendations"),),
-          const PopupMenuItem(value:"Contact",child: Text("Contact Us"),),
-          const PopupMenuItem(value:"ManageAccounts",child: Text("Manage Accounts"),),
-          const PopupMenuItem(value:"ManageProducts",child: Text("Manage Products"),),
-          const PopupMenuItem(value:"Dashboard",child: Text("Dashboard"),),
-          const PopupMenuItem(value: "Sign Out",child: Text("Sign out"),),
-        ];
-      });
+    List<dynamic> adminEmailDy = documentSnapshot.get("email");
+    DocumentSnapshot documentSnapshotSA =await  firestore.collection("admin").doc("superAdmin").get();
+    String superAdminEmail = documentSnapshotSA.get("email");
+    List<String> adminEmail = [];
+    for(int i =0 ; i<adminEmailDy.length;i++) {
+      adminEmail.add(adminEmailDy[i]);
+    }
+
+    if(adminEmail.contains(auth.currentUser!.email)){
+      if(superAdminEmail == auth.currentUser!.email){
+        setState(() {
+          popItems = [
+            const PopupMenuItem(value:"My account", child: Text("My Account"),),
+            const PopupMenuItem(value:"ScanHistory",child: Text("Scan History"),),
+            const PopupMenuItem(value:"Recommendations",child: Text("Recommendations"),),
+            const PopupMenuItem(value:"Contact",child: Text("Contact Us"),),
+            const PopupMenuItem(value:"ManageAccounts",child: Text("Manage Accounts"),),
+            const PopupMenuItem(value:"ManageProducts",child: Text("Manage Products"),),
+            const PopupMenuItem(value:"Dashboard",child: Text("Dashboard"),),
+            const PopupMenuItem(value: "Sign Out",child: Text("Sign out"),),
+          ];
+        });
+      }
+      else{
+        setState(() {
+          popItems = [
+            const PopupMenuItem(value:"My account", child: Text("My Account"),),
+            const PopupMenuItem(value:"ScanHistory",child: Text("Scan History"),),
+            const PopupMenuItem(value:"Recommendations",child: Text("Recommendations"),),
+            const PopupMenuItem(value:"Contact",child: Text("Contact Us"),),
+            const PopupMenuItem(value:"ManageProducts",child: Text("Manage Products"),),
+            const PopupMenuItem(value:"Dashboard",child: Text("Dashboard"),),
+            const PopupMenuItem(value: "Sign Out",child: Text("Sign out"),),
+          ];
+        });
+      }
     }
   }
 
@@ -833,7 +855,9 @@ class _MainScreenState extends State<MainScreen> {
                             Navigator.push(context,MaterialPageRoute(builder: (context)=>const ProductManagement()));
                           }
                           if(value == "ManageAccounts"){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const AccountsManagement()));
+                            DocumentSnapshot document = await firestore.collection("admin").doc("Information").get();
+                            List<dynamic> adminEmails = document.get("email");
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=> AccountsManagement(adminsList: adminEmails,)));
                           }
                           if(value == "Dashboard") Navigator.push(context, MaterialPageRoute(builder: (context)=>const Dashboard()));
                         },
