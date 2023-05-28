@@ -1,11 +1,8 @@
 // ignore_for_file: file_names, use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:locale_emoji_flutter/locale_emoji_flutter.dart';
-import 'package:prototype/Components/RegScreenButton.dart';
-import 'package:prototype/Screens/MainScreen.dart';
 import 'package:prototype/constants.dart';
 class AccountDetailsDashboard extends StatefulWidget {
   const AccountDetailsDashboard({Key? key, required this.usersData, required this.email, required this.image}) : super(key: key);
