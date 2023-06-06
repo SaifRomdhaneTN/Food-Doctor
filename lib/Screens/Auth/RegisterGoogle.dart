@@ -26,9 +26,9 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
   late int age=0;
   late String fullName='';
   late String phoneNumber='';
-  late String countryCode = 'Us';
-  String countryName ='Unites States';
-  String phoneCode="1";
+  late String countryCode = 'TN';
+  String countryName ='Tunisia';
+  String phoneCode="216";
   bool pnvaildation = false;
 
 
@@ -71,7 +71,7 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                 const SizedBox(
                   height: 50.0,
                 ),
-                Text("Full Name",style: kTextRegStyle),
+                Text("Full name",style: kTextRegStyle),
                 const SizedBox(height: 10.0),
                 SizedBox(
                     width: 200.0,
@@ -87,21 +87,17 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                           return "Empty Field";
                         } else if (value.contains(RegExp(r'[0-9]'))) {
                           return "The name must not contain numbers";
-                        } else if(value.length <5) {
-                          return"The name should be at least 5 letters long";
                         }
                         return null;
                       },)
                 ),
                 const SizedBox(height: 20.0),
-                Text("Date Of Birth",style: kTextRegStyle),
+                Text("Date of birth",style: kTextRegStyle),
                 const SizedBox(height: 10.0),
                 SizedBox(
                   width: 200.0,
                   child: TextFormField(
                     decoration: kInputDecorationOfAuth.copyWith(
-                        hintText: "${selectedDate.toLocal()}".split(' ')[0],
-                        hintStyle: const TextStyle(color: Colors.black),
                         prefixIcon: const Icon(Icons.calendar_month,color: kCPGreenMid,)
                     ),
                     readOnly: true,
@@ -117,7 +113,7 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                   ),
                 ),
                 const SizedBox(height: 20.0,),
-                Text("Country Of Residence",style: kTextRegStyle),
+                Text("Country of residence",style: kTextRegStyle),
                 const SizedBox(height: 10.0,),
                 SizedBox(
                   width: 200.0,
@@ -142,7 +138,7 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                   ),
                 ),
                 const SizedBox(height: 20.0,),
-                Text("Phone Number",style: kTextRegStyle),
+                Text("Phone number",style: kTextRegStyle),
                 const SizedBox(height: 10.0,),
                 SizedBox(
                   width: 200.0,

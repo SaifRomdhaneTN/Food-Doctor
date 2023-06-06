@@ -9,12 +9,13 @@ import 'package:prototype/constants.dart';
 class DashboardItemRowImage extends StatelessWidget {
   const DashboardItemRowImage({
     super.key,
-    required this.imageUrl, required this.barcode, required this.name,
+    required this.imageUrl, required this.barcode, required this.name, required this.count,
   });
 
   final String imageUrl;
   final String barcode;
   final String name;
+  final int count;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +41,7 @@ class DashboardItemRowImage extends StatelessWidget {
                   radius: 50,
                 )
             ),
+            Text("scanned ${count.toString()} times",style: const TextStyle(fontFamily: 'Eastman',fontSize: 12,),),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(name,style: const TextStyle(fontFamily: 'Eastman',fontSize: 12,fontWeight: FontWeight.bold),),

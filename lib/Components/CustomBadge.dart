@@ -19,10 +19,10 @@ class CustomBadge extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 5.0),
             child: CircleAvatar(
               backgroundColor: Colors.green,
-              radius: 35,
+              radius: 25,
               child: FaIcon(
                 icon,
-                size: 50,
+                size: 30,
                 color: Colors.white,)
               ,),
           ),

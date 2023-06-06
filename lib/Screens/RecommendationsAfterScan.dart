@@ -78,7 +78,7 @@ class _RecommendationsAfterScanState extends State<RecommendationsAfterScan> {
         if(productMatchCategories[j]==productCategories[k]) counter++;
       }
     }
-    if(counter>3 && productsThatMatch[i]['Barcode']!= product.getBarCode()) updatedList.add(productsThatMatch[i]);
+    if(counter>=3 && productsThatMatch[i]['Barcode']!= product.getBarCode()) updatedList.add(productsThatMatch[i]);
     }
     updatedList.shuffle();
     for(int i=0;i<updatedList.length;i++){
@@ -93,9 +93,9 @@ class _RecommendationsAfterScanState extends State<RecommendationsAfterScan> {
         recommendations.add(
             Column(
               children: [
-                const Image(image: AssetImage('assets/sademoji.gif'),height: 200,width: 200,),
+                const Image(image: AssetImage('assets/crossedout.png'),height: 200,width: 200,),
                 Text("Sorry... There are no products in our database that matches your needs."
-                    "\n weather that being similiar to the product scanned or if it is to your preferences.",style: kTitleTextStyle2.copyWith(fontSize: 22,color: kCPGreenDark),textAlign: TextAlign.center,),
+                    "\n weather that being similiar to the product scanned or if it is to your preferences.",style: kTitleTextStyle2.copyWith(fontSize: 22,color: kCPGreenLight),textAlign: TextAlign.center,),
               ],
             ));
       });}

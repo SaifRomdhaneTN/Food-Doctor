@@ -72,10 +72,12 @@ class _ScanResultState extends State<ScanResult> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(Result.getimageURL()),
-                  backgroundColor: Colors.white,
-                  radius: 70,
+                child: Center(
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(Result.getimageURL()),
+                    backgroundColor: Colors.white,
+                    radius: 70,
+                  ),
                 ),
               ),
               Padding(padding: const EdgeInsets.symmetric(vertical: 5),child: Text(" ${Result.getname()} Par ${Result.getmaker()}",textAlign: TextAlign.center,style: kResultPNameTextStyle)),
@@ -88,7 +90,7 @@ class _ScanResultState extends State<ScanResult> {
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: Text("List of Ingreidients :",style: TextStyle(fontFamily: 'Eastman',fontSize: 24,fontWeight: FontWeight.bold),),
+                child: Text("Ingreidients :",style: TextStyle(fontFamily: 'Eastman',fontSize: 24,fontWeight: FontWeight.bold),),
               ),
               Wrap(
                 alignment: WrapAlignment.spaceEvenly,
@@ -99,19 +101,10 @@ class _ScanResultState extends State<ScanResult> {
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(
-                        width:200,
-                        child: Text(Result.getCanEat(),style: kResultPIngrTextStyle.copyWith(fontWeight: FontWeight.bold))
-                    ),
-                    SizedBox(
-                      height: 100,
-                      width: 100,
-                      child: Image(image: AssetImage(resultgif))
-                    )
-                  ],
+                child: SizedBox(
+                  height: 100,
+                  width: 100,
+                  child: Image(image: AssetImage(resultgif))
                 ),
               ),
               const SizedBox(

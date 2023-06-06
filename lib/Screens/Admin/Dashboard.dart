@@ -77,7 +77,7 @@ class _DashboardState extends State<Dashboard> {
         Locale locale = Locale('en', countriesList[i].key);
         setState(() {
           countries.add(
-              DashboardItemRowFlags(locale: locale, countryCode: countriesList[i].key,)
+              DashboardItemRowFlags(locale: locale, countryCode: countriesList[i].key,count: countriesList[i].value,)
           );
           countries.add(
               const SizedBox(
@@ -146,6 +146,7 @@ class _DashboardState extends State<Dashboard> {
           categories.add(DashboardItemRowIcon(
             icon: icon,
             name: categoriesList[i].key,
+            count: categoriesList[i].value,
           ));
           categories.add(
               const SizedBox(
@@ -185,6 +186,7 @@ class _DashboardState extends State<Dashboard> {
           topProducts.add( DashboardItemRowImage(
             imageUrl: productsImageUrlList[i].key,
             barcode: productsScanNumList[i].key,
+            count: productsScanNumList[i].value,
             name: productsNameList[i].key,
           ));
           topProducts.add(const SizedBox(
@@ -287,7 +289,7 @@ class _DashboardState extends State<Dashboard> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10.0),
               child: Text(
-                "Ages by percentage :",
+                "Ages of users by percentage :",
                 textAlign: TextAlign.center,
                 style: kTitleTextStyle.copyWith(color: Colors.white,fontSize: 22),
               ),

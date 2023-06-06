@@ -13,11 +13,11 @@ class ProductnotfoundPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image(image: AssetImage('assets/sademoji.gif'),width: 200,height: 200,),
+          Image(image: AssetImage('assets/crossedout.png'),width: 200,height: 200,),
           SizedBox(height:20,),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: Text("So sorry but the product you are scanning is unrecognizable. \n we apologize for this inconvenience :(",style: TextStyle(
+            child: Text("Sorry but the product you are scanning is unrecognizable in our database. \n we apologize for this inconvenience :(",style: TextStyle(
               fontFamily: 'Eastman',
               fontSize: 24,
               wordSpacing: 1.5,

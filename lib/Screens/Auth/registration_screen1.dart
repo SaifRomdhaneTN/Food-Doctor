@@ -31,9 +31,9 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
   late int Age=0;
   late String FullName='';
   late String PhoneNumber='';
-  late String CountryCode = 'US';
-  String countryName ='Unites States';
-  String phoneCode="1";
+  late String CountryCode = 'TN';
+  String countryName ='Tunisia';
+  String phoneCode="216";
   bool pnvaildation = false;
 
 
@@ -78,7 +78,7 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                   const SizedBox(
                     height: 50.0,
                   ),
-                  Text("Full Name",style: kTextRegStyle),
+                  Text("Full name",style: kTextRegStyle),
                   const SizedBox(height: 10.0),
                   SizedBox(
                     width: 200.0,
@@ -94,8 +94,6 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                         return "Empty field";
                       } else if (value.contains(RegExp(r'[0-9]'))) {
                         return "The name must not contain numbers.";
-                      } else if(value.length <5) {
-                        return"Must be at least 5 characters long";
                       }
                       return null;
                     },
@@ -103,14 +101,12 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                     )
                     ),
                   const SizedBox(height: 20.0),
-                  Text("Date Of Birth",style: kTextRegStyle),
+                  Text("Date of birth",style: kTextRegStyle),
                   const SizedBox(height: 10.0),
                   SizedBox(
                     width: 200.0,
                     child: TextFormField(
                     decoration: kInputDecorationOfAuth.copyWith(
-                        hintText: "${selectedDate.toLocal()}".split(' ')[0],
-                        hintStyle: const TextStyle(color: Colors.black),
                         prefixIcon: const Icon(Icons.calendar_month,color: kCPGreenMid,)
                     ),
                     readOnly: true,
@@ -154,7 +150,7 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                     ),
                   ),
                   const SizedBox(height: 20.0,),
-                  Text("Phone Number",style: kTextRegStyle),
+                  Text("Phone number",style: kTextRegStyle),
                   const SizedBox(height: 10.0,),
                   SizedBox(
                     width: 200.0,

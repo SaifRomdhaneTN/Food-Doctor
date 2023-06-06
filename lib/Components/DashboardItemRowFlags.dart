@@ -7,11 +7,12 @@ import 'package:prototype/constants.dart';
 class DashboardItemRowFlags extends StatelessWidget {
   const DashboardItemRowFlags({
     super.key,
-    required this.locale, required this.countryCode,
+    required this.locale, required this.countryCode, required this.count,
   });
 
   final Locale locale;
   final String countryCode;
+  final int count;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,7 @@ class DashboardItemRowFlags extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10),
             child: Text(locale.flagEmoji!,style: const TextStyle(fontFamily: 'Eastman',fontSize: 60,),),
           ),
+          Text("${count.toString()} users",style: const TextStyle(fontFamily: 'Eastman',fontSize: 16),),
           Text(countryCode,style: const TextStyle(fontFamily: 'Eastman',fontSize: 30,fontWeight: FontWeight.bold),),
         ],
       ),

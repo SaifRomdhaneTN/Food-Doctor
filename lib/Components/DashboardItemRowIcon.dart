@@ -6,11 +6,12 @@ import 'package:prototype/constants.dart';
 class DashboardItemRowIcon extends StatelessWidget {
   const DashboardItemRowIcon({
     super.key,
-    required this.icon, required this.name,
+    required this.icon, required this.name, required this.count,
   });
 
   final IconData icon;
   final String name;
+  final int count;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +28,7 @@ class DashboardItemRowIcon extends StatelessWidget {
             padding: const EdgeInsets.only(right: 20.0,left:20.0,top: 10,bottom: 5),
             child: Icon(icon,size: 60,color: kCPGreenMid,)
           ),
+          Text("${count.toString()} products",style: const TextStyle(fontFamily: 'Eastman',fontSize: 12),),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(name,style: const TextStyle(fontFamily: 'Eastman',fontSize: 26,fontWeight: FontWeight.bold),),

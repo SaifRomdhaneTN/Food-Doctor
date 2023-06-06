@@ -25,7 +25,7 @@ class _FormPage1State extends State<FormPage1> {
   late String? religion;
   late String? allergy;
   List<String> alergies = ['Lactos Inflorescence','Nut Allergy','Gluten Allergy','Fish Allergy','None'];
-  List<String> selectedAlergies = [];
+  List<String> selectedAlergies = ['None'];
   final _formKey = GlobalKey<FormState>();
 
   bool validateAlergies(List<String> sa){
@@ -189,7 +189,7 @@ class _FormPage1State extends State<FormPage1> {
                     });
                   },
               decoration: kInputDecorationOfAuth,
-              whenEmpty: "Select One",)
+              whenEmpty: "None",)
             ),
             const SizedBox(
               height: 20.0,

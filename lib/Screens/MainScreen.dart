@@ -329,6 +329,54 @@ class _MainScreenState extends State<MainScreen> {
               children: [
               SimpleDialog(
                 elevation: 5,
+                title: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0,horizontal: 50),
+                  child: SizedBox(
+                    width:165,
+                    child: SimpleDialogOption(
+                      onPressed: ()  async {
+                        if(!halalSearch && !veganSearch && !vegitarianSearch && !lactosFreeSearch && !glutenFreeSearch && !nutFreeSearch && !fishFreeSearch && !lowFatSearch && !lowSaltSearch) {
+                          filtersSearchOn = false;
+                        }
+                        else{
+                          filtersSearchOn = true;
+                        }
+                        Map<String,dynamic> searchFilters = {
+                          'halal':halalSearch,
+                          'vegan':veganSearch,
+                          'vegetarian':vegitarianSearch,
+                          'lactosFree':lactosFreeSearch,
+                          'glutenFree':glutenFreeSearch,
+                          'nutFree':nutFreeSearch,
+                          'fishFree':fishFreeSearch,
+                          'lowSalt':lowSaltSearch,
+                          'lowFat':lowFatSearch
+                        };
+                        if(filtersSearchOn == false && productNameEnteredBool==false && ingrsEnteredBool==false) {
+                          Navigator.pop(context);
+                        }
+                        else {
+                          SearchParameters searchParameters = SearchParameters(
+                              productNameEnteredBool,
+                              filtersSearchOn,
+                              ingrsEnteredBool,
+                              productNameEntered,
+                              searchFilters,
+                              ingrsEntered);
+                          List<Map<String, dynamic>>productsThatMatch = await searchParameters.SearchProduct();
+                          resetSearch();
+                          Navigator.push(context,MaterialPageRoute(builder: (context)=>SearchResult(products: productsThatMatch, searchParameters: searchParameters)));
+                        }
+                      },
+                      child:  const FiltersButtonMaterial(
+                        btnColor: Colors.green,
+                        icon: Icons.search,
+                        txtColor: Colors.white,
+                        value: 'Search',
+                      ),
+                    ),
+                  ),
+                ),
                 children: [
                 Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -337,54 +385,7 @@ class _MainScreenState extends State<MainScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10.0),
-                            child: SizedBox(
-                              width:165,
-                              child: SimpleDialogOption(
-                                onPressed: ()  async {
-                                  if(!halalSearch && !veganSearch && !vegitarianSearch && !lactosFreeSearch && !glutenFreeSearch && !nutFreeSearch && !fishFreeSearch && !lowFatSearch && !lowSaltSearch) {
-                                    filtersSearchOn = false;
-                                  }
-                                  else{
-                                    filtersSearchOn = true;
-                                  }
-                                  Map<String,dynamic> searchFilters = {
-                                    'halal':halalSearch,
-                                    'vegan':veganSearch,
-                                    'vegetarian':vegitarianSearch,
-                                    'lactosFree':lactosFreeSearch,
-                                    'glutenFree':glutenFreeSearch,
-                                    'nutFree':nutFreeSearch,
-                                    'fishFree':fishFreeSearch,
-                                    'lowSalt':lowSaltSearch,
-                                    'lowFat':lowFatSearch
-                                  };
-                                  if(filtersSearchOn == false && productNameEnteredBool==false && ingrsEnteredBool==false) {
-                                    Navigator.pop(context);
-                                  }
-                                  else {
-                                    SearchParameters searchParameters = SearchParameters(
-                                        productNameEnteredBool,
-                                        filtersSearchOn,
-                                        ingrsEnteredBool,
-                                        productNameEntered,
-                                        searchFilters,
-                                        ingrsEntered);
-                                    List<Map<String, dynamic>>productsThatMatch = await searchParameters.SearchProduct();
-                                    resetSearch();
-                                    Navigator.push(context,MaterialPageRoute(builder: (context)=>SearchResult(products: productsThatMatch, searchParameters: searchParameters)));
-                                  }
-                                },
-                                child:  const FiltersButtonMaterial(
-                                  btnColor: Colors.green,
-                                  icon: Icons.search,
-                                  txtColor: Colors.white,
-                                  value: 'Search',
-                                ),
-                              ),
-                            ),
-                          ),
+
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -404,8 +405,6 @@ class _MainScreenState extends State<MainScreen> {
                                     }
                                   },
                                   decoration: const InputDecoration(
-                                      hintText: "Ex Mayonnaise",
-                                      hintMaxLines: 2,
                                       errorMaxLines: 2
                                   ),
                                 ),
@@ -444,10 +443,6 @@ class _MainScreenState extends State<MainScreen> {
                                       ingrsEnteredBool = false;
                                     }
                                   },
-                                  decoration: const InputDecoration(
-                                      hintText: "Sugar, Salt, ...",
-                                      hintMaxLines: 2
-                                  ),
                                 ),
                               )
                             ],
@@ -639,6 +634,52 @@ class _MainScreenState extends State<MainScreen> {
         );
       },
     );
+  }
+
+  Future<bool> checkBarcode(String? barcode) async {
+    bool condition = false;
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog( // <-- SEE HERE
+              title: const Text(
+                'Are you sure this is the barcode scanned?',
+                style: TextStyle(fontFamily: 'Eastman',fontSize: 24,fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              children: [
+                Text(
+                  barcode!,
+                  style: const TextStyle(fontFamily: 'Eastman',
+                      fontSize: 18,fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SimpleDialogOption(
+                      child: const Text('Yes'),
+                      onPressed: () async {
+                        condition =true;
+                        Navigator.pop(context);
+                      },
+                    ),
+                    SimpleDialogOption(
+                      child: const Text('No'),
+                      onPressed: (){
+
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                )
+              ]
+          );
+        });
+    return condition;
   }
 
   void setUserInfo() async{
@@ -855,6 +896,7 @@ class _MainScreenState extends State<MainScreen> {
                               }
                             }
                             else{
+                              prefs.setString("LastEmail", auth.currentUser!.email!);
                               await auth.signOut();
                               if(Navigator.canPop(context)) {
                                 Navigator.popUntil(context, ModalRoute.withName(WelcomeScreen.id));
@@ -949,65 +991,56 @@ class _MainScreenState extends State<MainScreen> {
 
 
   Future<void> scanBarcode() async {
-    String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-      '#ff6666', // Color of the toolbar.
-      'Cancel', // Text displayed on the cancel button.
-      true, // Whether to show the flash icon.
-      ScanMode.BARCODE, // The type of scan to perform (barcode or QR code).
-    );
+    String? barcodeScanRes;
+    try{
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666', // Color of the toolbar.
+        'Cancel', // Text displayed on the cancel button.
+        true, // Whether to show the flash icon.
+        ScanMode.BARCODE, // The type of scan to perform (barcode or QR code).
+      );
+    }
+    catch(e){
+      CoolAlert.show(
+          context: context,
+          type: CoolAlertType.error,
+          title: "Error",
+          text: "Couldn't identify the barcode. Please try to scan again and make sure that the picture is clear. ${e.toString()} ");
+    }
     Map<String, dynamic> data;
     setState(() {
       showS=true;
     });
-    try{
-       data = await getDataFromBarcode(barcodeScanRes);
-       if(data['status'] == 1) {
-         Processing processing = Processing(data);
-         Product productResult;
-         if (!customScan) {
-           productResult = await processing.checkIfCanEat(barcodeScanRes);
+    if(barcodeScanRes != null){
+         data = await getDataFromBarcode(barcodeScanRes);
+         if(data['status'] == 1) {
+           Processing processing = Processing(data);
+           Product productResult;
+           if (!customScan) {
+             productResult = await processing.checkIfCanEat(barcodeScanRes);
+           }
+           else {
+             productResult = await processing.checkIfCanEatWithCustomScan(
+                 barcodeScanRes, customPrefs);
+           }
+           if(productResult.getimageURL() !='error') {processing.saveToDataBase(productResult);}
+           setState(() {
+             showS = false;
+           });
+           if (productResult.getdetails()["Error"] != null) {
+             Navigator.push(context, MaterialPageRoute(builder: (context) => const ProductnotfoundPage()));
+           } else {
+             Navigator.push(context, MaterialPageRoute(builder: (context) => ScanResult(Result: productResult)));
+           }
          }
-         else {
-           productResult = await processing.checkIfCanEatWithCustomScan(
-               barcodeScanRes, customPrefs);
-         }
-         if(productResult.getimageURL() !='error') {processing.saveToDataBase(productResult);}
-        setState(() {
-           showS = false;
-         });
-         if (productResult.getdetails()["Error"] != null) {
+         else if(data['status_verbose'] == "product not found") {
            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProductnotfoundPage()));
-         } else {
-           Navigator.push(context, MaterialPageRoute(builder: (context) => ScanResult(Result: productResult)));
          }
-       }
-       else if(data['status_verbose'] == "product not found") {
-         Navigator.push(context, MaterialPageRoute(builder: (context) => const ProductnotfoundPage()));
-       }
-    }
-    catch(e){
-      if(!e.toString().contains('404')){
-        if(!e.toString().contains('NoSuchMethodError')){
-          CoolAlert.show(
-              context: context,
-              type: CoolAlertType.error,
-              title: "Error",
-              text: "An Error occurred! please do Scan again. ${e.toString()}");
-        }
-      }
-      else{
-        CoolAlert.show(
-            context: context,
-            type: CoolAlertType.error,
-            title: "Error",
-            text: "Couldn't identify the barcode. Please try to scan again and make sure that the picture is clear.");
-      }
-    }
 
+       }
     setState(() {
       showS=false;
     });
-
     controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -1034,13 +1067,8 @@ class _MainScreenState extends State<MainScreen> {
       Uri.parse(url),
       headers: headers
     );
-
-    if (response.statusCode == 200) {
       Map<String, dynamic> data = json.decode(response.body);
       return data;
-    } else {
-      throw Exception("${response.statusCode}");
-    }
   }
 }
 

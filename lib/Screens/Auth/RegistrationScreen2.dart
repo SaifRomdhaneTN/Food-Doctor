@@ -175,24 +175,9 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                                         if(!validatePassword(value)) return "Not Valid";
                                         return null;
                                       },
-                                      obscureText: obscurePassword,
-                                      decoration: kInputDecorationOfAuth.copyWith(
-                                        suffixIcon: InkWell(
-                                          onTap: (){
-                                            setState(() {
-                                              if(iconPassword == CupertinoIcons.eye_fill ){
-                                                iconPassword = CupertinoIcons.eye_slash;
-                                                obscurePassword = false;
-                                              }
-                                              else{
-                                                iconPassword = CupertinoIcons.eye_fill;
-                                                obscurePassword = true;
-                                              }
-                                            });
-                                          },
-                                          child: Icon(iconPassword,color: kCPGreenMid,),
-                                        )
-                                      ),
+                                      obscureText: true,
+                                      enableInteractiveSelection: false,
+                                      decoration: kInputDecorationOfAuth,
                                       onChanged: (value){
                                         pwd=value;
                                       },
@@ -200,7 +185,7 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                                   ),
                                 ),
 
-                                Text("Confirm Password",style: kTextRegStyle,),
+                                Text("Confirm password",style: kTextRegStyle,),
 
                                 Padding(
                                   padding: const EdgeInsets.only(top:10.0,bottom: 20.0),

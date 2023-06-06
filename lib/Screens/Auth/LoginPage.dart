@@ -35,6 +35,7 @@ class _LoginPState extends State<LoginP> {
   late String email;
   late String pwd;
   bool showS = false;
+  late String emailFieldInitial ="";
   final _formKey = GlobalKey<FormState>();
 
   Future<void> getUserFilledFormProperty( ) async {
@@ -108,8 +109,21 @@ class _LoginPState extends State<LoginP> {
 
       }
   }
+  void setEmailFieldInitialValue()async{
+    SharedPreferences prefs =await SharedPreferences.getInstance();
+    if(prefs.containsKey("LastEmail")) {
+      setState(() {
+      emailFieldInitial = prefs.getString("LastEmail")!;
+      email = emailFieldInitial;
+    });
+    }
+  }
 
-
+  @override
+  void initState() {
+    setEmailFieldInitialValue();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return   ModalProgressHUD(
@@ -134,10 +148,12 @@ class _LoginPState extends State<LoginP> {
                   SizedBox(
                     width: 200.0,
                     child: TextFormField(
+                      key:  Key(emailFieldInitial.toString()),
                       keyboardType: TextInputType.emailAddress,
                       decoration: kInputDecorationOfAuth.copyWith(
                         prefixIcon: const Icon(Icons.email,color: kCPGreenMid,)
                       ),
+                      initialValue: emailFieldInitial,
                       onChanged: (value){
                         email = value;
                       },
