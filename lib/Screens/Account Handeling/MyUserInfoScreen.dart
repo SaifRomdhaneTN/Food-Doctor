@@ -1,6 +1,7 @@
-// ignore_for_file: no_logic_in_create_state, file_names
+// ignore_for_file: no_logic_in_create_state, file_names, use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:prototype/Components/BackgroundWidget.dart';
 import 'package:prototype/Components/DisplayButtonPref.dart';
@@ -83,8 +84,10 @@ class _MyUserInfoScreenState extends State<MyUserInfoScreen> {
             DisplayButtonPrefV2(
               title: "Change",
               color: const Color(0XFF9DC08B),
-              onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>const ChangePersonalInfo()));
+              onPressed: () async {
+                DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance.collection("users").doc(FirebaseAuth.instance.currentUser!.email).get();
+                Map<String,dynamic> persenolInfo = documentSnapshot.get("Additonal Information");
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> ChangePersonalInfo(userInfo: persenolInfo,)));
               },
               textStyle: kPrefDisplayTextStyle.copyWith(color: Colors.white),)
           ],

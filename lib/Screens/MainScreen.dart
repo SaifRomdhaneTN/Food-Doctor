@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -790,6 +791,32 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  Future<void> SignOutMethod() async {
+    FirebaseAuth auth =FirebaseAuth.instance;
+    await firestore.collection("users").doc(auth.currentUser!.email).update({"LoggedIn":false});
+    SharedPreferences prefs =await SharedPreferences.getInstance();
+    prefs.remove("email");
+    String providerId = auth.currentUser!.providerData.first.providerId;
+    if(providerId == 'google.com'){
+      GoogleSignIn googleSignIn = GoogleSignIn();
+      await googleSignIn.signOut();
+      if(Navigator.canPop(context)) {
+        Navigator.popUntil(context, ModalRoute.withName(WelcomeScreen.id));
+      } else {
+        Navigator.pushNamed(context, WelcomeScreen.id);
+      }
+    }
+    else{
+      prefs.setString("LastEmail", auth.currentUser!.email!);
+      await auth.signOut();
+      if(Navigator.canPop(context)) {
+        Navigator.popUntil(context, ModalRoute.withName(WelcomeScreen.id));
+      } else {
+        Navigator.pushNamed(context, WelcomeScreen.id);
+      }
+    }
+  }
+
   @override
   void initState() {
     setUserInfo();
@@ -815,7 +842,9 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
   }
   Future<bool> _onWillPop() async {
-    return false; //<-- SEE HERE
+    // await SignOutMethod();
+    SystemNavigator.pop();
+    return Future.value(true);
   }
 
   @override
@@ -881,29 +910,7 @@ class _MainScreenState extends State<MainScreen> {
                       },
                         onSelected: (value) async {
                           if(value == "Sign Out"){
-                            FirebaseAuth auth =FirebaseAuth.instance;
-                            await firestore.collection("users").doc(auth.currentUser!.email).update({"LoggedIn":false});
-                            SharedPreferences prefs =await SharedPreferences.getInstance();
-                            prefs.remove("email");
-                            String providerId = auth.currentUser!.providerData.first.providerId;
-                            if(providerId == 'google.com'){
-                              GoogleSignIn googleSignIn = GoogleSignIn();
-                              await googleSignIn.signOut();
-                              if(Navigator.canPop(context)) {
-                                Navigator.popUntil(context, ModalRoute.withName(WelcomeScreen.id));
-                              } else {
-                                Navigator.pushNamed(context, WelcomeScreen.id);
-                              }
-                            }
-                            else{
-                              prefs.setString("LastEmail", auth.currentUser!.email!);
-                              await auth.signOut();
-                              if(Navigator.canPop(context)) {
-                                Navigator.popUntil(context, ModalRoute.withName(WelcomeScreen.id));
-                              } else {
-                                Navigator.pushNamed(context, WelcomeScreen.id);
-                              }
-                            }
+                            await SignOutMethod();
                           }
                           if(value == "My account"){
                             FirebaseFirestore firestore = FirebaseFirestore.instance;

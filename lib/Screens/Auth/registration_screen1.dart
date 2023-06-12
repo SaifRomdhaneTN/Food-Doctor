@@ -35,6 +35,7 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
   String countryName ='Tunisia';
   String phoneCode="216";
   bool pnvaildation = false;
+  String displayDate = "";
 
 
   Future<void> _selectDate(BuildContext context) async {
@@ -107,12 +108,17 @@ class _RegistrationScreenP1State extends State<RegistrationScreenP1> {
                     width: 200.0,
                     child: TextFormField(
                     decoration: kInputDecorationOfAuth.copyWith(
+                      hintText: displayDate,
+                        hintMaxLines: 2,
                         prefixIcon: const Icon(Icons.calendar_month,color: kCPGreenMid,)
                     ),
                     readOnly: true,
                     onTap: () => setState(() async {
                       await _selectDate(context);
                       Age = CalculateAge(selectedDate);
+                      setState(() {
+                        displayDate = "${selectedDate.month}/${selectedDate.day}/${selectedDate.year}";
+                      });
                     }),
                     validator: (value){
                       if(value == null) return  "Empty field";

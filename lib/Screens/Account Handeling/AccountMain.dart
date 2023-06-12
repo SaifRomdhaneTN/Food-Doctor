@@ -11,6 +11,8 @@ import 'package:prototype/Screens/Account%20Handeling/MyUserInfoScreen.dart';
 import 'package:prototype/Screens/Account%20Handeling/PreferencesScreen.dart';
 import 'package:prototype/Screens/Account%20Handeling/SignedInWithGoogle.dart';
 import 'package:prototype/Screens/Auth/ChangePhoto.dart';
+import 'package:prototype/Screens/WelcomeScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountMain extends StatefulWidget {
    const AccountMain({Key? key, required this.document}) : super(key: key);
@@ -58,9 +60,9 @@ class _AccountMainState extends State<AccountMain> {
                           }
                         }
                         await firestore.collection("users").doc(email).delete();
-
-
-                        Navigator.of(context).popUntil((route) => route.isFirst);
+                        SharedPreferences prefs =await SharedPreferences.getInstance();
+                        prefs.remove("email");
+                        Navigator.pushNamed(context, WelcomeScreen.id);
                       },
                     ),
                     SimpleDialogOption(
@@ -124,7 +126,7 @@ class _AccountMainState extends State<AccountMain> {
               },),
             AccountButton(
               text: 'My User Information',
-              onPressed: (){
+              onPressed: ()  {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>MyUserInfoScreen(userInfo: userPersonalInfo)));
               },),
             AccountButton(

@@ -1,4 +1,4 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_picker/country_picker.dart';
@@ -8,6 +8,7 @@ import 'package:prototype/Components/BackgroundWidget.dart';
 import 'package:phone_number/phone_number.dart' as plugin;
 import 'package:prototype/Components/RegScreenButton.dart';
 import 'package:prototype/Screens/FormScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../constants.dart';
 
@@ -23,6 +24,7 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
 
 
   DateTime selectedDate = DateTime.now();
+  String displayDate = "";
   late int age=0;
   late String fullName='';
   late String phoneNumber='';
@@ -98,12 +100,17 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                   width: 200.0,
                   child: TextFormField(
                     decoration: kInputDecorationOfAuth.copyWith(
+                        hintText: displayDate,
+                        hintMaxLines: 2,
                         prefixIcon: const Icon(Icons.calendar_month,color: kCPGreenMid,)
                     ),
                     readOnly: true,
                     onTap: () => setState(() async {
                       await _selectDate(context);
                       age = calculateAge(selectedDate);
+                      setState(() {
+                        displayDate = "${selectedDate.month}/${selectedDate.day}/${selectedDate.year}";
+                      });
                     }),
                     validator: (value){
                       if(value == null) return  "Empty Field";
@@ -163,7 +170,7 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                 ),
                 const SizedBox(height: 10.0,),
                 RegScreenButton(
-                  onPressed: (){
+                  onPressed: () async {
                     if(_formKey.currentState!.validate()){
                       FirebaseFirestore firestore = FirebaseFirestore.instance;
                       FirebaseAuth auth =FirebaseAuth.instance;
@@ -184,6 +191,8 @@ class _RegisterGoogleState extends State<RegisterGoogle> {
                         'customScanPref':{},
                         'imageUrl':auth.currentUser!.photoURL
                       });
+                      SharedPreferences prefs =await SharedPreferences.getInstance();
+                      prefs.setString("email", auth.currentUser!.email!);
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>const FormScreen()));
                     }
                   },

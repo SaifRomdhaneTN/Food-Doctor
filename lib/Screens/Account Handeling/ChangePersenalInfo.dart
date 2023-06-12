@@ -12,8 +12,9 @@ import 'package:prototype/Screens/MainScreen.dart';
 import '../../constants.dart';
 
 class ChangePersonalInfo extends StatefulWidget {
-  const ChangePersonalInfo({Key? key}) : super(key: key);
+  const ChangePersonalInfo({Key? key, required this.userInfo}) : super(key: key);
 
+  final Map<String,dynamic> userInfo;
   @override
   State<ChangePersonalInfo> createState() => _ChangePersonalInfoState();
 }
@@ -26,10 +27,12 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
   late int age=0;
   late String fullName='';
   late String phoneNumber='';
-  String countryName ='Unites States';
-  late String countryCode="US";
-  String phoneCode="1";
+  late String displayDate = "";
+  String countryName ='Tunisia';
+  late String countryCode="TN";
+  String phoneCode="216";
   bool pnvaildation = false;
+
 
 
   Future<void> _selectDate(BuildContext context) async {
@@ -49,6 +52,24 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
     return DateTime.now().year-bd.year;
   }
 
+  void setValues(){
+    setState(() {
+      fullName = widget.userInfo['FullName'];
+      Timestamp timestamp = widget.userInfo['DateOfBirth'];
+      selectedDate = timestamp.toDate();
+      displayDate = "${selectedDate.month}/${selectedDate.day}/${selectedDate.year}";
+      age = widget.userInfo['Age'];
+      phoneNumber = widget.userInfo['PhoneNumber'];
+      countryName = widget.userInfo['Country'];
+      countryCode = widget.userInfo['CountryCode'];
+    });
+  }
+
+  @override
+  void initState() {
+    setValues();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,12 +92,15 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
                 const SizedBox(
                   height: 50.0,
                 ),
-                Text("Full Name",style: kTextRegStyle),
+                Text("Full name",style: kTextRegStyle),
                 const SizedBox(height: 10.0),
                 SizedBox(
                     width: 200.0,
                     child: TextFormField(
-                      decoration: kInputDecorationOfAuth,
+                      decoration: kInputDecorationOfAuth.copyWith(
+                          prefixIcon: const Icon(Icons.account_circle,color: kCPGreenMid,)
+                      ),
+                      initialValue: fullName,
                       onChanged: (value){
                         fullName=value;
                       },
@@ -92,19 +116,23 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
                       },)
                 ),
                 const SizedBox(height: 20.0),
-                Text("Date of Birth",style: kTextRegStyle),
+                Text("Date of birth",style: kTextRegStyle),
                 const SizedBox(height: 10.0),
                 SizedBox(
                   width: 200.0,
                   child: TextFormField(
                     decoration: kInputDecorationOfAuth.copyWith(
-                        hintText: "${selectedDate.toLocal()}".split(' ')[0],
+                        prefixIcon: const Icon(Icons.calendar_month,color: kCPGreenMid,),
+                        hintText: displayDate,
                         hintStyle: const TextStyle(color: Colors.black)
                     ),
                     readOnly: true,
                     onTap: () => setState(() async {
                       await _selectDate(context);
                       age = calculateAge(selectedDate);
+                      setState(() {
+                        displayDate = "${selectedDate.month}/${selectedDate.day}/${selectedDate.year}";
+                      });
                     }),
                     validator: (value){
                       if(value == null) return  "Empty Field";
@@ -119,7 +147,9 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
                 SizedBox(
                   width: 200.0,
                   child: TextFormField(
-                    decoration: kInputDecorationOfAuth.copyWith(hintText: countryName),
+                    decoration: kInputDecorationOfAuth.copyWith(
+                        prefixIcon: const Icon(Icons.room,color: kCPGreenMid,),
+                        hintText: countryName),
                     readOnly: true,
                     onTap: (){showCountryPicker(
                       context: context,
@@ -144,8 +174,13 @@ class _ChangePersonalInfoState extends State<ChangePersonalInfo> {
                 SizedBox(
                   width: 200.0,
                   child: TextFormField(
+                    initialValue: phoneNumber,
                     keyboardType: TextInputType.phone,
-                    decoration: kInputDecorationOfAuth.copyWith(prefixText: "+ $phoneCode ",prefixStyle: const TextStyle(color: Colors.black)),
+                    decoration: kInputDecorationOfAuth.copyWith(
+                        prefixText: "+ $phoneCode ",
+                        prefixStyle: const TextStyle(color: Colors.black),
+                        prefixIcon: const Icon(Icons.phone,color: kCPGreenMid,)
+                    ),
                     onChanged: (value) async {
                       phoneNumber = await plugin.PhoneNumberUtil().format(value, phoneCode);
                       pnvaildation = await plugin.PhoneNumberUtil().validate(phoneNumber,regionCode: phoneCode);

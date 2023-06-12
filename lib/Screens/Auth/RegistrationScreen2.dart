@@ -175,9 +175,25 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                                         if(!validatePassword(value)) return "Not Valid";
                                         return null;
                                       },
-                                      obscureText: true,
+                                      obscureText: obscureConfirmPassword,
                                       enableInteractiveSelection: false,
-                                      decoration: kInputDecorationOfAuth,
+                                      decoration: kInputDecorationOfAuth.copyWith(
+                                          suffixIcon: InkWell(
+                                            onTap: (){
+                                              setState(() {
+                                                if(iconPasswordConfirm == CupertinoIcons.eye_fill ){
+                                                  iconPasswordConfirm = CupertinoIcons.eye_slash;
+                                                  obscureConfirmPassword = false;
+                                                }
+                                                else{
+                                                  iconPasswordConfirm = CupertinoIcons.eye_fill;
+                                                  obscureConfirmPassword = true;
+                                                }
+                                              });
+                                            },
+                                            child: Icon(iconPasswordConfirm,color: kCPGreenMid,),
+                                          )
+                                      ),
                                       onChanged: (value){
                                         pwd=value;
                                       },
@@ -197,23 +213,9 @@ class _RegistrationScreenP2State extends State<RegistrationScreenP2> {
                                         if(value!= pwd) return "It does not match";
                                         return null;
                                       },
-                                      obscureText: obscureConfirmPassword,
+                                      obscureText: true,
                                       decoration: kInputDecorationOfAuth.copyWith(
-                                          suffixIcon: InkWell(
-                                            onTap: (){
-                                              setState(() {
-                                                if(iconPasswordConfirm == CupertinoIcons.eye_fill ){
-                                                  iconPasswordConfirm = CupertinoIcons.eye_slash;
-                                                  obscureConfirmPassword = false;
-                                                }
-                                                else{
-                                                  iconPasswordConfirm = CupertinoIcons.eye_fill;
-                                                  obscureConfirmPassword = true;
-                                                }
-                                              });
-                                            },
-                                            child: Icon(iconPasswordConfirm,color: kCPGreenMid,),
-                                          )
+
                                       ),
                                       onChanged: (value){
                                         cpwd=value;

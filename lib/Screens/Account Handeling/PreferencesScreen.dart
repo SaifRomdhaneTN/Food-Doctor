@@ -92,8 +92,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 DisplayButtonPref(
-                  title: "Halal or kosher :",
-                  value: preferences['HalalKosherPref'],
+                  title: "Halal Food :",
+                  value: preferences['HalalKosherPref'] == "Neither" ? 'No' : 'Yes',
                   onPressed: (){},),
                 DisplayButtonPref(
                   title: "Meat Preferences",
