@@ -1,16 +1,7 @@
-# prototype
+# Food Doctor
 
-A new Flutter project.
+This is a mobile application developed using Flutter and Firebase. 
 
-## Getting Started
+It scans barcodes on shelf-bought products, then matches them to the user's preferences before it determines if it is safe to eat.  I utilized 2 different APIs, which are openFoodFacts and Edamam, to achieve this goal. 
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Unfortunately, its development was cut short due to the company responsible for it stopping production, so this is more like an 80 % finished product.
